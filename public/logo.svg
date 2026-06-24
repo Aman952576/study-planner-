@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c5cbf"/>
+      <stop offset="100%" style="stop-color:#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c4b5fd"/>
+      <stop offset="100%" style="stop-color:#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="url(#bg)"/>
+  <!-- Inner glow -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="url(#accent)" stroke-width="4" opacity="0.3"/>
+  <circle cx="256" cy="256" r="160" fill="none" stroke="url(#accent)" stroke-width="2" opacity="0.2"/>
+  <!-- P letter icon -->
+  <path d="M180 380V130h80c40 0 70 10 86 30 16 20 24 48 24 82 0 34-8 60-24 78-16 18-46 27-88 27h-38v-52h24c18 0 30-4 38-12 8-8 12-22 12-42s-4-34-13-42c-9-8-22-12-40-12h-36v224h-25z" fill="#fff" opacity="0.95"/>
+  <!-- Decorative dots -->
+  <circle cx="140" cy="140" r="6" fill="#c4b5fd" opacity="0.6"/>
+  <circle cx="380" cy="120" r="4" fill="#c4b5fd" opacity="0.4"/>
+  <circle cx="390" cy="360" r="5" fill="#c4b5fd" opacity="0.5"/>
+  <circle cx="120" cy="380" r="3" fill="#c4b5fd" opacity="0.3"/>
+</svg>

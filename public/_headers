@@ -1,0 +1,18 @@
+/favicon.svg
+  Content-Type: image/svg+xml
+
+/logo.svg
+  Content-Type: image/svg+xml
+
+/screenshots/*
+  Content-Type: image/png
+
+/*.png
+  Content-Type: image/png
+
+/*.json
+  Content-Type: application/json
+
+/sw.js
+  Content-Type: application/javascript
+  Service-Worker-Allowed: /

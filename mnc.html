@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Prep Dashboard | UPSC + GATE + MNC</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f0f1a;--card:#1a1a2e;--card2:#16213e;--text:#e0e0e0;--text2:#aaa;--accent:#6c63ff;--accent2:#f72585;--green:#4ade80;--gold:#fbbf24;--border:#2a2a4a;--shadow:0 4px 20px rgba(0,0,0,.3)}
+.light{--bg:#f5f5fa;--card:#fff;--card2:#f0f0f5;--text:#1a1a2e;--text2:#666;--border:#ddd;--shadow:0 4px 20px rgba(0,0,0,.08)}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;transition:.3s;min-height:100vh}
+.container{max-width:1400px;margin:0 auto;padding:16px}
+/* HEADER */
+header{background:linear-gradient(135deg,#6c63ff,#f72585);border-radius:16px;padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden}
+header::after{content:'CUJ';position:absolute;right:30px;top:15px;font-size:72px;font-weight:900;opacity:.08}
+header h1{color:#fff;font-size:1.8rem;margin-bottom:4px}
+header p{color:rgba(255,255,255,.85);font-size:.95rem}
+header .badge{display:inline-block;background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px;font-size:.75rem;color:#fff;margin-top:8px;margin-right:6px}
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:30px;cursor:pointer;font-size:.85rem;font-weight:600;transition:.3s;box-shadow:var(--shadow)}
+.theme-toggle:hover{background:var(--accent);color:#fff}
+/* GLOBAL PROGRESS */
+.global-progress{background:var(--card);border-radius:12px;padding:16px 20px;margin-bottom:20px;box-shadow:var(--shadow);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.global-progress .label{font-weight:600;font-size:.9rem;min-width:140px}
+.global-progress .bar-wrap{flex:1;min-width:150px;height:18px;background:var(--border);border-radius:20px;overflow:hidden;position:relative}
+.global-progress .bar-fill{height:100%;background:linear-gradient(90deg,#6c63ff,#f72585);border-radius:20px;transition:width .5s;width:0%}
+.global-progress .pct{font-weight:700;font-size:.95rem;min-width:45px;text-align:right}
+/* TABS */
+.tab-bar{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.tab-btn{padding:12px 22px;border:none;border-radius:10px;background:var(--card);color:var(--text);font-weight:600;font-size:.85rem;cursor:pointer;transition:.3s;flex:1;min-width:120px;text-align:center;box-shadow:var(--shadow)}
+.tab-btn:hover{background:var(--accent);color:#fff}
+.tab-btn.active{background:var(--accent);color:#fff}
+.tab-pane{display:none}
+.tab-pane.active{display:block;animation:fade .35s}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* PANEL */
+.panel{background:var(--card);border-radius:12px;padding:22px;margin-bottom:18px;box-shadow:var(--shadow)}
+.panel h2{font-size:1.2rem;margin-bottom:14px;color:var(--accent);border-left:3px solid var(--accent);padding-left:12px}
+.panel h3{font-size:1rem;margin:14px 0 8px;color:var(--text)}
+.panel h4{font-size:.92rem;margin:10px 0 6px;color:var(--accent2)}
+.panel p{font-size:.88rem;color:var(--text2);margin-bottom:8px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
+/* TOPIC CHECKLIST */
+.topic-group{margin-bottom:14px}
+.topic-group .group-title{font-weight:700;font-size:.92rem;padding:8px 12px;background:var(--card2);border-radius:6px;margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.topic-group .group-title .prog{font-size:.78rem;color:var(--text2);font-weight:400}
+.topic-item{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 20px;font-size:.85rem;cursor:pointer;border-radius:4px;transition:.2s}
+.topic-item:hover{background:var(--card2)}
+.topic-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+.topic-item .label{flex:1}
+.topic-item .sub{font-size:.75rem;color:var(--text2);margin-left:8px}
+.topic-item.checked .label{text-decoration:line-through;opacity:.5}
+/* SCHEDULE */
+.day-card{background:var(--card2);border-radius:10px;padding:14px;position:relative}
+.day-card .day{font-weight:700;font-size:.9rem;color:var(--accent);margin-bottom:6px}
+.day-card .time{font-size:.8rem;color:var(--text2)}
+.day-card .tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.7rem;font-weight:600;margin:2px;background:var(--accent);color:#fff}
+.day-card .tag.gs{background:#2563eb}
+.day-card .tag.lang{background:#9333ea}
+.day-card .tag.both{background:#db2777}
+.day-card .tag.chill{background:#059669}
+/* PROGRESS BAR (mini) */
+.mini-bar{height:6px;background:var(--border);border-radius:10px;overflow:hidden;margin-top:6px}
+.mini-bar .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;transition:width .4s}
+/* RESOURCE GRID */
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:12px 0}
+.res-card{background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--accent)}
+.res-card h4{font-size:.85rem;margin-bottom:4px}
+.res-card p{font-size:.78rem;color:var(--text2)}
+.res-card a{color:var(--accent);font-size:.82rem;font-weight:600;text-decoration:none;display:inline-block;margin-top:6px}
+.res-card a:hover{text-decoration:underline}
+/* CALENDAR */
+.cal-day{background:var(--card2);border-radius:6px;padding:4px;min-height:44px;cursor:pointer;transition:.15s;position:relative;font-size:.7rem;text-align:center;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.cal-day:hover{background:var(--accent);color:#fff;opacity:.8}
+.cal-day.today{border-color:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
+.cal-day.selected{background:var(--accent);color:#fff}
+.cal-day.other-month{opacity:.3}
+.cal-day .day-num{font-weight:700;font-size:.75rem;line-height:1.2}
+.cal-day .day-dot{width:4px;height:4px;border-radius:50%;margin:1px;display:inline-block}
+.cal-day .day-dots{display:flex;gap:1px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+.cal-day .milestone-label{font-size:.55rem;line-height:1;margin-top:2px;padding:0 2px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;color:var(--accent2);font-weight:600}
+.cal-day .task-dot{background:var(--green)}
+.cal-day .milestone-dot{background:var(--accent2)}
+.cal-day .sem-dot{background:var(--gold)}
+@media(max-width:500px){.cal-day{min-height:34px;font-size:.62rem;padding:2px}.cal-day .day-num{font-size:.65rem}}
+/* DAY DETAIL */
+.task-item-list{padding:6px 10px;margin:4px 0;background:var(--card2);border-radius:6px;display:flex;align-items:center;gap:8px;font-size:.82rem}
+.task-item-list input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:pointer}
+.task-item-list .task-label{font-weight:500}
+.task-item-list>span:first-of-type{flex:1;min-width:0}
+.task-item-list .task-tag{font-size:.65rem;padding:1px 6px;border-radius:10px;font-weight:600;flex-shrink:0}
+.task-item-list .task-sub{font-size:.68rem;color:var(--text2);display:block;margin-top:2px;line-height:1.3;opacity:.85;word-break:break-word;overflow-wrap:break-word}
+.task-item-list.done .task-label{text-decoration:line-through;opacity:.5}
+.task-item-list.done .task-sub{opacity:.4}
+.bl-btn{padding:2px 8px;border:none;border-radius:10px;font-size:.65rem;font-weight:700;cursor:pointer;background:#f59e0b;color:#111;transition:.2s;white-space:nowrap}
+.bl-btn:hover{background:#d97706;transform:scale(1.05)}
+.cloud-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:30px;font-weight:600;font-size:.9rem;text-decoration:none;transition:.3s;margin:4px;background:#059669;color:#fff}
+.cloud-btn:hover{background:#047857;transform:translateY(-2px)}
+.cloud-btn.blue{background:#2563eb}
+.cloud-btn.blue:hover{background:#1d4ed8}
+.cloud-btn.purple{background:#7c3aed}
+.cloud-btn.purple:hover{background:#6d28d9}
+/* UTILITIES */
+.mt-8{margin-top:8px}
+.mb-8{margin-bottom:8px}
+.ml-4{margin-left:4px}
+.text-center{text-align:center}
+.flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🎯 Premium 4-Year Prep Dashboard</h1>
+<p>CU Jammu · B.Tech Mathematics & Computing · UPSC CSE (Maths Optional) + GATE CS/DA</p>
+<div>
+<span class="badge">🎯 Dual Track</span>
+<span class="badge">📅 7-Day Cycle</span>
+<span class="badge">⚡ localStorage Auto-Save</span>
+</div>
+</header>
+
+<button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+
+<!-- GLOBAL PROGRESS -->
+<div class="global-progress">
+<span class="label">📊 Overall Progress</span>
+<div class="bar-wrap"><div class="bar-fill" id="globalFill"></div></div>
+<span class="pct" id="globalPct">0%</span>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+<button class="tab-btn active" data-tab="tab1">🏠 Control Room & 7-Day</button>
+<button class="tab-btn" data-tab="tab2">📚 GS Tracker</button>
+<button class="tab-btn" data-tab="tab3">🗣️ Language Track</button>
+<button class="tab-btn" data-tab="tab4">🖥️ MNC · GATE · Maths</button>
+<button class="tab-btn" data-tab="tab5">📋 UPSC GS Syllabus</button>
+<button class="tab-btn" data-tab="tab6">📐 Maths Optional</button>
+<button class="tab-btn" data-tab="tab7">📅 4Y Planner</button>
+</div>
+
+<!-- =================== TAB 1: CONTROL ROOM =================== -->
+<div class="tab-pane active" id="tab1">
+<div class="panel">
+<h2>🧠 My Dual Strategy</h2>
+<div class="grid-2">
+<div>
+<p><strong>Background:</strong> B.Tech MnC @ CU Jammu · Resilience built from failing 15 exams — I know the value of grit.</p>
+<p><strong>Math Overlap:</strong> IISc Bangalore Roadmap covers <strong>80%</strong> of UPSC Maths Optional + GATE DA/CS. <strong>20% extra</strong> (Statics, Dynamics, Fluid Dynamics, Rigid Dynamics, Modern Algebra proofs) via PYQs & notes.</p>
+<p><strong>Coding Track:</strong> C++ DSA (Shradha Ma'am / Apna College) + Flowcharts/Pseudocode mastery.</p>
+</div>
+<div>
+<p><strong>Daily Distribution:</strong></p>
+<ul style="margin-left:18px;font-size:.85rem;">
+<li>⚡ 60% Engineering (Sem + MnC + C++ DSA)</li>
+<li>📖 20% UPSC GS & Language</li>
+<li>🧮 10% Maths (Optional Level)</li>
+<li>🔬 10% Physics (Pure joy/hobby + sem)</li>
+</ul>
+<p style="margin-top:8px;"><strong>3-Hour Smart Rule:</strong> 1H Book Reading + 1H Video + 30M Assignment + 30M Revision</p>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h2>📅 7-Day Weekly Cycle</h2>
+<div class="grid-2">
+<div class="day-card">
+<div class="day">Day 1 · 3 · 5 <span class="tag gs">GS Days</span></div>
+<div class="time">General Studies — Polity, History, Geography, Economy, Environment, S&T, Art & Culture, Ethics</div>
+<div class="mini-bar"><div class="fill" style="width:100%"></div></div>
+</div>
+<div class="day-card">
+<div class="day">Day 2 <span class="tag lang">English Day</span></div>
+<div class="time">Tarun Grover Grammar + Word Power Made Easy Vocab + Simple Novels → Indian Express Explained + The Hindu Editorials</div>
+<div class="mini-bar"><div class="fill" style="width:80%"></div></div>
+</div>
+<div class="day-card">
+<div class="day">Day 4 <span class="tag lang">Hindi Day</span></div>
+<div class="time">Hindi Vyakaran (Grammar) + Dainik Jagran Rashtriya Sanskaran Editorial Reading</div>
+<div class="mini-bar"><div class="fill" style="width:80%"></div></div>
+</div>
+<div class="day-card">
+<div class="day">Day 6 <span class="tag both">Dual Language Day</span></div>
+<div class="time">English + Hindi together — Translation & Expression practice</div>
+<div class="mini-bar"><div class="fill" style="width:90%"></div></div>
+</div>
+<div class="day-card" style="grid-column:span 2">
+<div class="day">Day 7 <span class="tag chill">Consolidation & Chill</span></div>
+<div class="time"><strong>1.5–2 Hours:</strong> Audit (Update tracker + micro-revision) + <strong>Second half OFF</strong> — recharge, hobbies, friends</div>
+<div class="mini-bar"><div class="fill" style="width:50%"></div></div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h2>👑 Master Strategic Exam Matrix — 30+ Credentials</h2>
+<p style="margin-bottom:8px;font-size:.82rem">📌 Unified topic system: each topic shows which exams cover it. Check off as you study. Resources included.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;font-size:.7rem">
+<div style="background:var(--card2);border-radius:6px;padding:6px;border-left:3px solid #f72585">
+<strong style="color:#f72585">UPSC CSE</strong> — Grad+21-32 · Prelims GS+CSAT · Mains Essay+4GS+Maths</div>
+<div style="background:var(--card2);border-radius:6px;padding:6px;border-left:3px solid #6c63ff">
+<strong style="color:#6c63ff">GATE CS</strong> — 3rd/4th Yr Feb · DM,LA,Calc,DS,DL,CA,OS,DBMS,CD,Net</div>
+<div style="background:var(--card2);border-radius:6px;padding:6px;border-left:3px solid #4ade80">
+<strong style="color:#4ade80">GATE DA</strong> — 3rd/4th Yr Feb · Prob&Stats,LA,Calc,Python,C++,DSA,ML,AI</div>
+</div>
+</div>
+<div class="panel" style="font-size:.82rem;line-height:1.6">
+<p><strong>⚡ CORE PROTOCOL:</strong> Yeh Matrix tumhaare main runtime systems (Coding DSA + IISc Math Curriculum + UPSC Static GS/Language) par optimized hai. Kisi bhi side-quest ke liye rasta badalna ya extra kharcha nahi karna hai. Zero pressure ke saath aura farm karne ke liye forms bharna hai aur logic se execute karna hai.</p>
+</div>
+
+<!-- ====== 1. CORE TARGETS ====== -->
+<div class="topic-group">
+<div class="group-title"><span>🎯 CORE TARGETS — Ultimate Goals</span></div>
+
+<div class="exam-card" data-exam="upsc">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #f72585">
+<div style="display:flex;justify-content:space-between;align-items:center"><strong style="color:#f72585;font-size:.95rem">UPSC CSE 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">Main Target · Final Yr or Post-Grad</span></div>
+<p style="margin:4px 0"><strong>Eligibility:</strong> Graduation complete (B.Tech any degree) &amp; Age 21-32 years.</p>
+<p style="margin:4px 0"><strong>Timeline:</strong> Final Year Prelims or post-graduation.</p>
+<p style="margin:4px 0"><strong>Syllabus:</strong> Prelims: GS (Polity, History, Geo, Econ, Env) + CSAT Aptitude. Mains: Essay, 4 GS Papers, Languages + Maths Optional (Paper 1 &amp; 2).</p>
+<p style="margin:4px 0"><strong>Vectors:</strong> GS &amp; Lang: 3-hour cycle (Laxmikanth, Spectrum, Vivek Singh, Tarun Grover). Maths: 80% IISc Core overlap; balance via PYQs. DSA/Coding: Apna College.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="gate-cs">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #6c63ff">
+<div style="display:flex;justify-content:space-between;align-items:center"><strong style="color:#6c63ff;font-size:.95rem">GATE CS 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">Main Tech Target · 3rd/4th Yr Feb</span></div>
+<p style="margin:4px 0"><strong>Eligibility:</strong> 3rd or 4th Year B.Tech any branch (MnC explicitly allowed).</p>
+<p style="margin:4px 0"><strong>Timeline:</strong> 3rd Year Feb (first shot) + 4th Year Feb (final score mapping).</p>
+<p style="margin:4px 0"><strong>Syllabus:</strong> Discrete Mathematics, Linear Algebra, Calculus, Programming &amp; DSA, Digital Logic, Computer Architecture, OS, DBMS, Compiler Design, Networks, Aptitude.</p>
+<p style="margin:4px 0"><strong>Vectors:</strong> Core CS Theory: Standard books, NPTEL, GATE papers. Maths: IISc B.Tech roadmap + Manoj Chauhan.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="gate-da">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #4ade80">
+<div style="display:flex;justify-content:space-between;align-items:center"><strong style="color:#4ade80;font-size:.95rem">GATE DA 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">Main Data Target · 3rd/4th Yr Feb</span></div>
+<p style="margin:4px 0"><strong>Eligibility:</strong> 3rd/4th Year B.Tech (Perfect match for MnC).</p>
+<p style="margin:4px 0"><strong>Timeline:</strong> 3rd Year Feb (simultaneous with CS or standalone).</p>
+<p style="margin:4px 0"><strong>Syllabus:</strong> Probability &amp; Statistics (Heavy), Linear Algebra, Calculus &amp; Optimization, Python/C++, DSA, ML, AI.</p>
+<p style="margin:4px 0"><strong>Vectors:</strong> Maths: Manoj Chauhan + IISc curriculum. Lectures: SATHEE Portal + NPTEL.</p>
+</div>
+</div>
+</div>
+
+<!-- ====== 2. ELITE MATH & STATS RESEARCH ====== -->
+<div class="topic-group">
+<div class="group-title"><span>🔬 ELITE MATH & STATS RESEARCH SPACES</span></div>
+
+<div class="exam-card" data-exam="jam-ma">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #a855f7">
+<div><strong style="color:#a855f7">IIT JAM (MA) 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· 3rd/4th Yr Feb</span></div>
+<p><strong>Eligibility:</strong> B.Tech/Bachelor's with Mathematics core.<br><strong>Syllabus:</strong> Real Analysis, Multivariable Calculus, Linear Algebra, Group Theory, ODE. (50% smaller than IISc scope).<br><strong>Vectors:</strong> Manoj Chauhan core modules + IISc textbooks. Practice past 10yr JAM books.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="jam-ms">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #7c3aed">
+<div><strong style="color:#7c3aed">IIT JAM (MS) 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· 3rd/4th Yr Feb</span></div>
+<p><strong>Eligibility:</strong> B.Tech/Bachelor's with stats/math modules.<br><strong>Syllabus:</strong> Calculus, Matrix Ops, Probability, Distributions, Estimation, Testing.<br><strong>Vectors:</strong> Covered by GATE DA math + IISc probability modules. Track JAM official answer portals.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="isi">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #db2777">
+<div><strong style="color:#db2777">ISI Entrance 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Final Yr May</span></div>
+<p><strong>Eligibility:</strong> B.Tech/B.E. (MnC matches top criteria).<br><strong>Syllabus:</strong> Advanced Probability, Combinatorics, Matrix Theory, Logic.<br><strong>Vectors:</strong> ISI Kolkata master question brochures. Deep abstract analytical maths notes.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="cmi">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #0891b2">
+<div><strong style="color:#0891b2">CMI Entrance 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Final Yr May</span></div>
+<p><strong>Eligibility:</strong> B.Tech with math-intensive computing tracks.<br><strong>Syllabus:</strong> Proof-based Math, Abstract Algebra, TCS.<br><strong>Vectors:</strong> CMI past papers. Proof-based classical algebra (Gallian, Dummit &amp; Foote).</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="tifr">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #059669">
+<div><strong style="color:#059669">TIFR GS (Math/CS) 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Final Yr Dec</span></div>
+<p><strong>Eligibility:</strong> B.Tech/B.E. standard equivalent.<br><strong>Syllabus:</strong> Logic puzzles, Discrete Math, Combinatorics, algorithmic efficiency.<br><strong>Vectors:</strong> TIFR past GS papers. Deep mental reasoning, not formulas.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="jest">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #2563eb">
+<div><strong style="color:#2563eb">JEST (Theoretical CS) 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Feb/Mar</span></div>
+<p><strong>Eligibility:</strong> B.Tech/M.Sc matching computing profiles.<br><strong>Syllabus:</strong> Discrete Math, Automata, Graph Theory, DSA, algorithm complexities.<br><strong>Vectors:</strong> Standard Discrete Math (Kenneth Rosen) solves this.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="nbhm">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #ca8a04">
+<div><strong style="color:#ca8a04">NBHM Scholarship 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Jan/Feb</span></div>
+<p><strong>Eligibility:</strong> 3rd/4th Yr B.Tech with strong math track.<br><strong>Syllabus:</strong> Algebra (Group/Ring/Field), Real &amp; Complex Analysis, Geometry.<br><strong>Vectors:</strong> NBHM archive papers. Keep proofs clear on paper.</p>
+</div>
+</div>
+</div>
+
+<!-- ====== 3. GOVT TECH OFFICER & AEROSPACE ====== -->
+<div class="topic-group">
+<div class="group-title"><span>🛰️ GOVT TECH OFFICER & AEROSPACE ROLES</span></div>
+
+<div class="exam-card" data-exam="barc">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #dc2626">
+<div><strong style="color:#dc2626">BARC OCES/DGFS 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Mar/Apr · Also via GATE</span></div>
+<p><strong>Eligibility:</strong> B.Tech CS/ relevant with 60%+ marks.<br><strong>Syllabus:</strong> Matches GATE CS but higher speed (100Q/120min).<br><strong>Vectors:</strong> Solved GATE question vaults. Calculate accurately without calculators under timers.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="isro">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #1d4ed8">
+<div><strong style="color:#1d4ed8">ISRO Scientist SC 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad · Also GATE tracks</span></div>
+<p><strong>Eligibility:</strong> B.Tech relevant field, 65% or 6.84 CGPA.<br><strong>Syllabus:</strong> OS, CA, Compiler Design, DM, standard math logic.<br><strong>Vectors:</strong> ISRO past papers + core tech books (Hennessy, Galvin, Dragon Book).</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="nielit">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #9333ea">
+<div><strong style="color:#9333ea">NIELIT Scientist B 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Final Yr</span></div>
+<p><strong>Eligibility:</strong> B.Tech CS/IT/Electronics.<br><strong>Syllabus:</strong> 60% CS (DSA, OOPs, DBMS, System Design) + 40% Aptitude (Quant, Reason, English).<br><strong>Vectors:</strong> GATE CS notes + UPSC CSAT aptitude prep. MeitY recruitment updates.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="aai">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #ea580c">
+<div><strong style="color:#ea580c">AAI ATC 🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> B.Tech with Physics &amp; Math in any semester.<br><strong>Syllabus:</strong> 50% Physics+Math (11th-12th) + 50% Aptitude (Reasoning, Quant, English).<br><strong>Vectors:</strong> Saleem Ahmad Physics + Manoj Chauhan Calc + Tarun Grover English.</p>
+</div>
+</div>
+</div>
+
+<!-- ====== 4. CENTRAL ADMIN, INTELLIGENCE & REGULATORY ====== -->
+<div class="topic-group">
+<div class="group-title"><span>🏛️ CENTRAL ADMIN, INTELLIGENCE & REGULATORY BOARDS</span></div>
+
+<div class="exam-card" data-exam="ibacio">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #d97706">
+<div><strong style="color:#d97706">IB ACIO Executive 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Final Yr or Post-Grad</span></div>
+<p><strong>Eligibility:</strong> Graduation any field, Age 18-27.<br><strong>Syllabus:</strong> Tier1: CA, GS, Aptitude, English. Tier2: Descriptive (Essay, Précis).<br><strong>Vectors:</strong> 100% UPSC GS overlap + Language cycle (Tarun Grover / Word Power).</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="bpsc">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #e11d48">
+<div><strong style="color:#e11d48">BPSC Civil Services 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> Graduation any stream, Age 21-22+.<br><strong>Syllabus:</strong> Matches UPSC Mains + General Hindi + Bihar Special + Essay.<br><strong>Vectors:</strong> UPSC resources + Bihar textbooks (KBC Nano / Imtiaz Ahmad).</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="rbi">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #0284c7">
+<div><strong style="color:#0284c7">RBI Grade B Officer 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> Graduation, 60% minimum marks.<br><strong>Syllabus:</strong> Phase1: Quants, Reason, English, GA. Phase2: ESI, FM, English Descriptive.<br><strong>Vectors:</strong> Phase1: CSAT math. Phase2 ESI: UPSC GS-3 Economy.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="csir">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #65a30d">
+<div><strong style="color:#65a30d">CSIR CASE (SO/ASO) 🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> Graduation any recognized university.<br><strong>Syllabus:</strong> GA, English, Mental Ability, administrative essays.<br><strong>Vectors:</strong> UPSC GS notes + daily newspaper reading. No extra tracking.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="nabard">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #15803d">
+<div><strong style="color:#15803d">NABARD Grade A 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> Graduation engineering/agricultural streams.<br><strong>Syllabus:</strong> Aptitude + ESI (Rural focus) + Agriculture &amp; Rural Development.<br><strong>Vectors:</strong> UPSC GS-3 Economy + Kurukshetra magazine.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="cds">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #0d9488">
+<div><strong style="color:#0d9488">UPSC CDS 🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Final Yr Apr/Sep</span></div>
+<p><strong>Eligibility:</strong> Graduation or final semester (B.Tech allows Army/AF options).<br><strong>Syllabus:</strong> English, GK (Science, History, Polity), Elementary Math.<br><strong>Vectors:</strong> Zero extra prep — real-time exam simulator for UPSC format.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="cat">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #f97316">
+<div><strong style="color:#f97316">CAT 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Final Yr Nov</span></div>
+<p><strong>Eligibility:</strong> Graduation/final year, 50%+ aggregate marks.<br><strong>Syllabus:</strong> VARC, DILR, QA.<br><strong>Vectors:</strong> Engineering calc speed overlap. MnC academic diversity bonus.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="sebi">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #6366f1">
+<div><strong style="color:#6366f1">SEBI Grade A (IT) 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> B.Tech any branch or PG in CS/computational streams.<br><strong>Syllabus:</strong> Phase1: Aptitude. Phase2: Coding, DBMS, OS, Networks.<br><strong>Vectors:</strong> GATE CS overlap. Standard DSA structures.</p>
+</div>
+</div>
+</div>
+
+<!-- ====== 5. SSC CGL CHANNELS ====== -->
+<div class="topic-group">
+<div class="group-title"><span>📊 SSC CGL CHANNELS — Statistical & High-Aura Posts</span></div>
+
+<div class="exam-card" data-exam="ssc-jso">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #8b5cf6">
+<div><strong style="color:#8b5cf6">SSC CGL (JSO) 🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> Bachelor's with 60% in 12th Math OR grad with Statistics.<br><strong>Syllabus:</strong> Tier1: Math, Reason, English, GS + Tier2 Paper-II: Probability, Distributions, Sampling.<br><strong>Vectors:</strong> MnC degree unlocks parameters. Stats maps into GATE DA maths modules.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="ssc-si">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #a78bfa">
+<div><strong style="color:#a78bfa">Statistical Investigator 🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> Graduation with Statistics (MnC verifies this).<br><strong>Syllabus:</strong> Tier1 + Tier2 specialized mathematical data mapping.<br><strong>Vectors:</strong> Academic notes from college semesters. Zero independent investment.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="ssc-mea">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #c084fc">
+<div><strong style="color:#c084fc">ASO in MEA 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> Graduation any university, Age 20-30.<br><strong>Syllabus:</strong> Tier1 (4 modules) + Tier2: Math, English, Reasoning, Computer awareness.<br><strong>Vectors:</strong> Analytical calc + coding speed + language track. Standard mock portals.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="ssc-cbi">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #d8b4fe">
+<div><strong style="color:#d8b4fe">Sub-Inspector in CBI 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> Graduation + physical/medical fitness.<br><strong>Syllabus:</strong> SSC CGL Tier1 &amp; Tier2: Logical deduction + English.<br><strong>Vectors:</strong> Kiran/Pinnacle compilations for speed.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="ssc-it">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #e9d5ff">
+<div><strong style="color:#e9d5ff">Income Tax Inspector 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post-grad</span></div>
+<p><strong>Eligibility:</strong> Graduation any branch.<br><strong>Syllabus:</strong> Unified CGL speed structure: Quant shortcuts + Reasoning + English vocab.<br><strong>Vectors:</strong> Engineering speed + language proficiency cycles.</p>
+</div>
+</div>
+</div>
+
+<!-- ====== 6. DIRECT COMMISSIONS (GATE Score) ====== -->
+<div class="topic-group">
+<div class="group-title"><span>⚡ DIRECT COMMISSIONS (Via GATE Score — Zero Written)</span></div>
+
+<div class="exam-card" data-exam="drdo">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #dc2626">
+<div><strong style="color:#dc2626">DRDO Scientist B 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post GATE results · Apply via RAC</span></div>
+<p><strong>Process:</strong> GATE CS shortlist → Technical Interview.<br><strong>Vectors:</strong> Core CS revision (CS:APP, Galvin OS).</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="ibacio-tech">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #d97706">
+<div><strong style="color:#d97706">IB ACIO Tech (CS) 🌟🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post GATE · Apply via MHA</span></div>
+<p><strong>Process:</strong> GATE CS ranks → Security Interview.<br><strong>Vectors:</strong> Technical interview prep.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="npcil">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #64748b">
+<div><strong style="color:#64748b">NPCIL / BIS Scientist B 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Post GATE scorecard</span></div>
+<p><strong>Process:</strong> GATE scorecard → Core interview.<br><strong>Vectors:</strong> No written overload.</p>
+</div>
+</div>
+
+<div class="exam-card" data-exam="psus">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #475569">
+<div><strong style="color:#475569">PGCIL / IOCL / NTPC / POSOCO 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Apply on PSU portals</span></div>
+<p><strong>Process:</strong> GATE merit → GD + Technical presentation.<br><strong>Vectors:</strong> Apply dynamically on PSU portals.</p>
+</div>
+</div>
+</div>
+
+<!-- ====== 7. GLOBAL CREDENTIALS ====== -->
+<div class="topic-group">
+<div class="group-title"><span>🌐 GLOBAL CREDENTIALS & CERTIFICATIONS</span></div>
+
+<div class="exam-card" data-exam="comptia">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:6px 0;border-left:4px solid #14b8a6">
+<div><strong style="color:#14b8a6">CompTIA Security+ (SY0-701) 🌟🌟🌟🌟</strong> <span style="font-size:.72rem;color:var(--text2)">· Anytime during B.Tech</span></div>
+<p><strong>Eligibility:</strong> No formal restriction. Open to all.<br><strong>Syllabus:</strong> Threat landscapes, Security architecture, Crypto, Network defense, vulnerability management.<br><strong>Vectors:</strong> Pairs with Metasploit/GitHub portfolio. Professor Messer + ExamCompass.</p>
+</div>
+</div>
+</div>
+
+<script>
+// Exam matrix checkbox system
+const examTopics = {
+'UPSC CSE': [
+{id:'em_upsc1',label:'Prelims GS — Polity (Constitution, Federalism, Rights)',sub:'🎥 Laxmikanth Series | 📝 ForumIAS MCQs | 📖 Indian Polity by Laxmikanth'},
+{id:'em_upsc2',label:'Prelims GS — History (Ancient, Medieval, Modern, Freedom Struggle)',sub:'🎥 Pratik Nayak | 📝 Prepp.in PYQs | 📖 Spectrum + Old NCERT'},
+{id:'em_upsc3',label:'Prelims GS — Geography (Physical, Human, Indian)',sub:'🎥 Amit Sengupta | 📝 Drishti MCQs | 📖 NCERT + GC Leong'},
+{id:'em_upsc4',label:'Prelims GS — Economy & Social Development',sub:'🎥 Mrunal Patel | 📝 Mrunal.org MCQs | 📖 Vivek Singh Economy'},
+{id:'em_upsc5',label:'Prelims GS — Environment, Ecology, Biodiversity',sub:'🎥 PMF IAS | 📝 PMF MCQs | 📖 PMF IAS Environment'},
+{id:'em_upsc6',label:'Prelims CSAT — Comprehension, Reasoning, Numeracy, DI',sub:'🎥 CSAT by Dinesh Sir | 📝 UPSC CSAT PYQs | 📖 Disha CSAT'},
+{id:'em_upsc7',label:'Mains Essay — 2 Essays (1000-1200 words)',sub:'🎥 Anudeep Durishetty | 📝 Topper essays | 📖 Essay by S. Ansari'},
+{id:'em_upsc8',label:'Mains GS 1 — Heritage, History, Geography, Society',sub:'🎥 Pratik Nayak | 📝 Mains PYQs | 📖 Spectrum + NCERT'},
+{id:'em_upsc9',label:'Mains GS 2 — Polity, Governance, IR, Social Justice',sub:'🎥 Laxmikanth + OnlyIAS | 📝 Mains PYQs | 📖 Laxmikanth + VisionIAS'},
+{id:'em_upsc10',label:'Mains GS 3 — Economy, S&T, Environment, Security, DM',sub:'🎥 Mrunal + Drishti | 📝 Mains PYQs | 📖 Ramesh Singh + PT 365'},
+{id:'em_upsc11',label:'Mains GS 4 — Ethics, Integrity, Case Studies',sub:'🎥 Lexicon Ethics | 📝 Case studies PYQs | 📖 Lexicon + Mudit Jain'},
+{id:'em_upsc12',label:'Maths Optional — Paper 1 (LA, Calc, AG, ODE, Dynamics, Vector)',sub:'🎥 MIT OCW + Dr. GP | 📝 UPSC Maths PYQs | 📖 Hoffman & Kunze + Apostol'},
+{id:'em_upsc13',label:'Maths Optional — Paper 2 (Real/Complex Analysis, Algebra, PDE, Prog, Fluid)',sub:'🎥 Francis Su + Neso | 📝 UPSC Maths PYQs | 📖 Rudin + Ahlfors + Dummit'},
+{id:'em_upsc14',label:'Qualifying — Indian Language (Translation, Précis, Grammar)',sub:'🎥 Hindi Vyakaran | 📝 UPSC Language PYQs | 📖 Samanya Hindi'},
+{id:'em_upsc15',label:'Qualifying — English (Comprehension, Précis, Class X level)',sub:'🎥 Tarun Grover | 📝 UPSC English PYQs | 📖 Wren & Martin'},
+],
+'GATE CS': [
+{id:'em_gcs1',label:'Discrete Mathematics — Logic, Sets, Combinatorics, Graph Theory',sub:'🎥 TrevTutor | 📝 GATE CS PYQs | 📖 Kenneth Rosen'},
+{id:'em_gcs2',label:'Linear Algebra & Calculus',sub:'🎥 MIT OCW 18.06 | 📝 GATE CS PYQs | 📖 Strang LA'},
+{id:'em_gcs3',label:'Programming & Data Structures (C/C++)',sub:'🎥 Abdul Bari + Striver | 📝 GATE CS PYQs + LeetCode | 📖 CLRS'},
+{id:'em_gcs4',label:'Algorithms — D&C, Greedy, DP, Graph',sub:'🎥 Abdul Bari + Striver | 📝 GATE CS PYQs | 📖 CLRS + Kleinberg'},
+{id:'em_gcs5',label:'Digital Logic — Boolean, K-Maps, FSM, Combinational/Sequential',sub:'🎥 Neso Academy Digital | 📝 GATE CS PYQs | 📖 Morris Mano'},
+{id:'em_gcs6',label:'Computer Architecture — Pipeline, Cache, Memory',sub:'🎥 Gate Smashers COA | 📝 GATE CS PYQs | 📖 Hennessy & Patterson'},
+{id:'em_gcs7',label:'Operating Systems — Process, Memory, File, Concurrency',sub:'🎥 Gate Smashers OS | 📝 GATE CS PYQs | 📖 Galvin OS'},
+{id:'em_gcs8',label:'DBMS — SQL, Normalization, Transactions, Indexing',sub:'🎥 Gate Smashers DBMS | 📝 GATE CS PYQs | 📖 Korth DBMS'},
+{id:'em_gcs9',label:'Compiler Design — Lexical, Syntax, Semantic, Code Gen',sub:'🎥 Neso Academy CD | 📝 GATE CS PYQs | 📖 Dragon Book'},
+{id:'em_gcs10',label:'Computer Networks — TCP/IP, Routing, Congestion, Security',sub:'🎥 Gate Smashers CN | 📝 GATE CS PYQs | 📖 Kurose CN'},
+{id:'em_gcs11',label:'Theory of Computation — Automata, PDA, TM, Undecidability',sub:'🎥 Neso Academy TOC | 📝 GATE CS PYQs | 📖 Kozen / Sipser'},
+{id:'em_gcs12',label:'General Aptitude — Quant, Verbal, Reasoning',sub:'🎥 Various | 📝 GATE PYQs | 📖 GATE aptitude books'},
+],
+'GATE DA': [
+{id:'em_gda1',label:'Probability & Statistics (Heavy weight)',sub:'🎥 StatQuest Josh Starmer | 📝 GATE DA PYQs | 📖 Sheldon Ross'},
+{id:'em_gda2',label:'Linear Algebra & Calculus & Optimization',sub:'🎥 MIT OCW + 3B1B | 📝 GATE DA PYQs | 📖 Strang + Boyd'},
+{id:'em_gda3',label:'Python/C++ Programming Fundamentals',sub:'🎥 Corey Schafer / CodeWithHarry | 📝 HackerRank | 📖 Automate the Boring Stuff'},
+{id:'em_gda4',label:'Data Structures & Algorithms (DSA)',sub:'🎥 Striver A2Z DSA | 📝 LeetCode | 📖 CLRS'},
+{id:'em_gda5',label:'Machine Learning — Regression, SVM, Ensemble, Bayes',sub:'🎥 Stanford CS229 | 📝 Kaggle | 📖 ESL by Hastie'},
+{id:'em_gda6',label:'AI — Search, Planning, RL, Neural Networks',sub:'🎥 David Silver RL / MIT 6.S191 | 📝 Kaggle | 📖 Sutton & Barto / Goodfellow'},
+],
+'IIT JAM (MA)': [
+{id:'em_jma1',label:'Real Analysis — Sequences, Series, Continuity, Uniform Convergence',sub:'🎥 Francis Su / Michael Penn | 📝 JAM PYQs | 📖 Rudin PMA'},
+{id:'em_jma2',label:'Multivariable Calculus — Partial Derivatives, Lagrange, Multiple Integrals',sub:'🎥 Professor Leonard | 📝 JAM PYQs | 📖 Apostol Vol II'},
+{id:'em_jma3',label:'Linear Algebra — Vector Spaces, Transformations, Eigenvalues',sub:'🎥 MIT OCW 18.06 | 📝 JAM PYQs | 📖 Hoffman & Kunze'},
+{id:'em_jma4',label:'Group Theory — Subgroups, Normal, Quotient, Homomorphisms',sub:'🎥 Socratica | 📝 JAM PYQs | 📖 Gallian / Fraleigh'},
+{id:'em_jma5',label:'Ordinary Differential Equations — First/ Higher Order, Laplace',sub:'🎥 Dr. GP ODE | 📝 JAM PYQs | 📖 Coddington ODE'},
+],
+'IIT JAM (MS)': [
+{id:'em_jms1',label:'Calculus — Single & Multivariable',sub:'🎥 Professor Leonard | 📝 JAM MS PYQs | 📖 Apostol'},
+{id:'em_jms2',label:'Matrix Operations — Rank, Inverse, Eigenvalues, SVD',sub:'🎥 MIT 18.06 | 📝 JAM MS PYQs | 📖 Strang LA'},
+{id:'em_jms3',label:'Probability — Distributions, Joint, Conditional, Bayes',sub:'🎥 StatQuest | 📝 JAM MS PYQs | 📖 Sheldon Ross'},
+{id:'em_jms4',label:'Statistical Inference — Estimation, Hypothesis Testing',sub:'🎥 StatQuest Inference | 📝 JAM MS PYQs | 📖 Casella & Berger'},
+],
+'ISI Entrance': [
+{id:'em_isi1',label:'Advanced Probability — Distributions, Limit Theorems',sub:'🎥 MIT 6.041 | 📝 ISI PYQs | 📖 Billingsley / Ross'},
+{id:'em_isi2',label:'Combinatorics — Enumeration, Generating Functions',sub:'🎥 TrevTutor | 📝 ISI PYQs | 📖 Walk Through Combinatorics'},
+{id:'em_isi3',label:'Matrix Theory — Canonical Forms, Decompositions',sub:'🎥 MIT 18.06 | 📝 ISI PYQs | 📖 Horn & Johnson'},
+{id:'em_isi4',label:'Logic & Proof Techniques — Predicate Logic, Induction',sub:'🎥 TrevTutor Logic | 📝 ISI PYQs | 📖 How to Prove It'},
+],
+'CMI Entrance': [
+{id:'em_cmi1',label:'Proof-Based Mathematics — Abstract Reasoning',sub:'🎥 Socratica | 📝 CMI PYQs | 📖 How to Solve It by Polya'},
+{id:'em_cmi2',label:'Abstract Algebra — Groups, Rings, Fields',sub:'🎥 Socratica AA | 📝 CMI PYQs | 📖 Dummit & Foote'},
+{id:'em_cmi3',label:'Theoretical CS — Automata, Complexity, Logic',sub:'🎥 Neso Academy | 📝 CMI PYQs | 📖 Sipser TOC'},
+],
+'TIFR GS': [
+{id:'em_tifr1',label:'Logic Puzzles & Mental Reasoning',sub:'🎥 TIFR Prep | 📝 TIFR PYQs | 📖 Math Olympiad Resources'},
+{id:'em_tifr2',label:'Discrete Mathematics — Sets, Functions, Combinatorics',sub:'🎥 TrevTutor | 📝 TIFR PYQs | 📖 Kenneth Rosen'},
+{id:'em_tifr3',label:'Algorithmic Efficiency — Big O, Recurrence',sub:'🎥 Abdul Bari | 📝 TIFR PYQs | 📖 CLRS'},
+],
+'JEST': [
+{id:'em_jest1',label:'Discrete Math — Logic, Counting, Graph Theory',sub:'🎥 TrevTutor | 📝 JEST PYQs | 📖 Kenneth Rosen'},
+{id:'em_jest2',label:'Automata Theory — DFA, NFA, Regular Languages',sub:'🎥 Neso TOC | 📝 JEST PYQs | 📖 Kozen'},
+{id:'em_jest3',label:'Data Structures & Algorithms — Trees, Graphs, Searching',sub:'🎥 Striver | 📝 LeetCode | 📖 CLRS'},
+],
+'NBHM': [
+{id:'em_nbhm1',label:'Algebra — Group, Ring, Field Theory',sub:'🎥 Socratica | 📝 NBHM PYQs | 📖 Dummit & Foote'},
+{id:'em_nbhm2',label:'Real Analysis — Metric Spaces, Continuity, Integration',sub:'🎥 Francis Su | 📝 NBHM PYQs | 📖 Rudin PMA'},
+{id:'em_nbhm3',label:'Complex Analysis — Analytic Functions, Contour Integration, Residues',sub:'🎥 Neso Complex | 📝 NBHM PYQs | 📖 Ahlfors / Churchill'},
+],
+'BARC': [
+{id:'em_barc1',label:'GATE CS Core — High Speed (100Q/120min)',sub:'🎥 GATE Vaults | 📝 BARC PYQs | 📖 GATE solved papers'},
+],
+'ISRO': [
+{id:'em_isro1',label:'Operating Systems & Comp Arch',sub:'🎥 Gate Smashers | 📝 ISRO PYQs | 📖 Galvin + Hennessy'},
+{id:'em_isro2',label:'Compiler Design & Discrete Math',sub:'🎥 Neso CD | 📝 ISRO PYQs | 📖 Dragon Book'},
+],
+'NIELIT Scientist B': [
+{id:'em_nielit1',label:'DSA & OOPs + DBMS & System Design',sub:'🎥 Striver + Gaurav Sen | 📝 NIELIT PYQs | 📖 CLRS + Korth'},
+{id:'em_nielit2',label:'Aptitude — Quant, Reason, English',sub:'🎥 CAT prep + Tarun Grover | 📝 NIELIT PYQs | 📖 Arun Sharma QA'},
+],
+'AAI ATC': [
+{id:'em_aai1',label:'Physics (11th-12th) — Mechanics, Waves, Optics',sub:'🎥 Saleem Ahmad | 📝 AAI PYQs | 📖 HC Verma'},
+{id:'em_aai2',label:'Math (11th-12th) — Algebra, Trig, Calculus',sub:'🎥 Manoj Chauhan | 📝 AAI PYQs | 📖 RD Sharma'},
+{id:'em_aai3',label:'Aptitude — Reasoning, Quant, English',sub:'🎥 Tarun Grover | 📝 AAI PYQs | 📖 General English by SP Bakshi'},
+],
+'IB ACIO': [
+{id:'em_ib1',label:'Current Affairs & GS Static',sub:'🎥 Drishti CA | 📝 IB ACIO PYQs | 📖 PT 365'},
+{id:'em_ib2',label:'Numerical Aptitude, Reasoning & English',sub:'🎥 Tarun Grover + CAT prep | 📝 IB PYQs | 📖 Arun Sharma'},
+],
+'BPSC': [
+{id:'em_bpsc1',label:'General Hindi — Grammar, Translation, Essay',sub:'🎥 Hindi Vyakaran | 📝 BPSC Hindi PYQs | 📖 Samanya Hindi'},
+{id:'em_bpsc2',label:'Bihar Special — History, Geography, Economy',sub:'🎥 Bihar Special StudyIQ | 📝 BPSC PYQs | 📖 Bihar Samanya Gyan'},
+],
+'RBI Grade B': [
+{id:'em_rbi1',label:'Phase1 — Quants, Reasoning, English, GA',sub:'🎥 CAT + Tarun Grover | 📝 RBI PYQs | 📖 Arun Sharma QA'},
+{id:'em_rbi2',label:'Phase2 ESI — Economy, Social Dev, Rural India',sub:'🎥 Mrunal Economy | 📝 RBI PYQs | 📖 ESI by S. Chand'},
+{id:'em_rbi3',label:'Phase2 FM — Finance & Management',sub:'🎥 FM RBI Prep | 📝 RBI PYQs | 📖 FM by Prasanna Chandra'},
+],
+'CSIR CASE': [
+{id:'em_csir1',label:'General Awareness, English, Mental Ability',sub:'🎥 UPSC GS notes | 📝 CSIR PYQs | 📖 Lucent GK'},
+],
+'NABARD Grade A': [
+{id:'em_nab1',label:'Aptitude & Economic & Social Issues (Rural Focus)',sub:'🎥 RBI ESI Prep | 📝 NABARD PYQs | 📖 Kurukshetra'},
+{id:'em_nab2',label:'Agriculture & Rural Development',sub:'🎥 Drishti Agri | 📝 NABARD PYQs | 📖 Agriculture by Phulkia'},
+],
+'UPSC CDS': [
+{id:'em_cds1',label:'English — Grammar, Comprehension, Vocabulary',sub:'🎥 Tarun Grover | 📝 CDS PYQs | 📖 Wren & Martin'},
+{id:'em_cds2',label:'General Knowledge — Science, History, Polity',sub:'🎥 UPSC GS notes | 📝 CDS PYQs | 📖 Lucent GK'},
+{id:'em_cds3',label:'Elementary Mathematics — Arithmetic, Algebra, Geometry',sub:'🎥 Manoj Chauhan | 📝 CDS PYQs | 📖 RD Sharma'},
+],
+'CAT': [
+{id:'em_cat1',label:'VARC — Reading Comprehension, Verbal Ability',sub:'🎥 CAT VARC Prep | 📝 CAT PYQs | 📖 Word Power Made Easy'},
+{id:'em_cat2',label:'DILR — Data Interpretation, Logical Reasoning',sub:'🎥 CAT LR by Muralidharan | 📝 CAT PYQs | 📖 LR by Arun Sharma'},
+{id:'em_cat3',label:'QA — Arithmetic, Algebra, Geometry, Number System',sub:'🎥 CAT QA Prep | 📝 CAT PYQs | 📖 QA by Arun Sharma'},
+],
+'SEBI Grade A (IT)': [
+{id:'em_seb1',label:'Phase1 — Aptitude (Quant, Reason, English)',sub:'🎥 CAT prep | 📝 SEBI PYQs | 📖 Arun Sharma'},
+{id:'em_seb2',label:'Phase2 IT — Coding, DBMS, OS, Networks',sub:'🎥 GATE CS prep | 📝 SEBI PYQs | 📖 Korth + Galvin + Kurose'},
+],
+'SSC CGL': [
+{id:'em_ssc1',label:'Tier1 — Math, Reasoning, English, GA',sub:'🎥 SSC Prep Channels | 📝 SSC CGL PYQs | 📖 Kiran/Pinnacle'},
+{id:'em_ssc2',label:'Tier2 — Statistics (JSO): Probability, Distributions, Sampling',sub:'🎥 StatQuest | 📝 SSC JSO PYQs | 📖 Sheldon Ross'},
+{id:'em_ssc3',label:'Tier2 — ASO MEA: Math + English + Reasoning',sub:'🎥 CAT + Tarun Grover | 📝 SSC MEA PYQs | 📖 Arun Sharma'},
+],
+'CompTIA Security+': [
+{id:'em_sec1',label:'Threat Landscapes — Malware, Phishing, Risk Mgmt',sub:'🎥 Professor Messer | 📝 ExamCompass | 📖 SY0-701 Guide'},
+{id:'em_sec2',label:'Cryptography & PKI — Encryption, Digital Signatures',sub:'🎥 Professor Messer Crypto | 📝 Security+ practice | 📖 CompTIA Security+ Guide'},
+{id:'em_sec3',label:'Network Defense — Firewalls, IDS, Secure Architecture',sub:'🎥 Professor Messer NetSec | 📝 Security+ practice | 📖 Security+ Cert Guide'},
+],
+'PSU Commissions (GATE)': [
+{id:'em_psu1',label:'Technical Interview — Core CS Concepts',sub:'🎥 GATE Interview Prep | 📝 Core revision | 📖 CS:APP + Galvin OS'},
+{id:'em_psu2',label:'GD & Technical Presentation',sub:'🎥 GD Techniques | 📝 Mock GD | 📖 Current Affairs'},
+],
+};
+let examCtx = null;
+function renderExamBlock(examName, containerId) {
+  const data = examTopics[examName];
+  if (!data) return;
+  const container = document.getElementById(containerId);
+  let done = data.filter(i => localStorage.getItem('chk_'+i.id)==='1').length;
+  let total = data.length;
+  let pct = total ? Math.round(done/total*100) : 0;
+  let html = `<div class="topic-group">
+<div class="group-title"><span>${examName}</span><span class="prog">${done}/${total} (${pct}%)</span></div>
+<div class="mini-bar"><div class="fill" style="width:${pct}%"></div></div>`;
+  data.forEach(i => {
+    let checked = localStorage.getItem('chk_'+i.id)==='1';
+    html += `<div class="topic-item${checked?' checked':''}" data-id="${i.id}">
+<input type="checkbox" ${checked?'checked':''} data-id="${i.id}">
+<span class="label">${i.label}</span>
+<span class="sub">${i.sub}</span>
+</div>`;
+  });
+  html += '</div>';
+  container.innerHTML += html;
+  attachListeners(container);
+}
+function renderAllExams() {
+  ['UPSC CSE','GATE CS','GATE DA','IIT JAM (MA)','IIT JAM (MS)','ISI Entrance','CMI Entrance','TIFR GS','JEST','NBHM',
+   'BARC','ISRO','NIELIT Scientist B','AAI ATC','IB ACIO','BPSC','RBI Grade B','CSIR CASE','NABARD Grade A',
+   'UPSC CDS','CAT','SEBI Grade A (IT)','SSC CGL','CompTIA Security+','PSU Commissions (GATE)'].forEach(e => {
+    renderExamBlock(e, 'examBlockContainer');
+  });
+  updateAll();
+}
+</script>
+<div id="examBlockContainer"></div>
+
+<div class="panel">
+<h2>⚡ Quick Links & Resources</h2>
+<div class="grid-3">
+<div class="res-card"><h4>📘 NCERT Official Portal</h4><p>Free textbooks Class 1-12</p><a href="https://ncert.nic.in/textbook.php" target="_blank">Open →</a></div>
+<div class="res-card"><h4>🎓 SWAYAM / NPTEL</h4><p>IIT/IISc free courses</p><a href="https://swayam.gov.in/" target="_blank">Open →</a></div>
+<div class="res-card"><h4>📺 SATHEE Portal</h4><p>Ministry of Ed. IIT prep</p><a href="https://sathee.prutor.ai/" target="_blank">Open →</a></div>
+<div class="res-card"><h4>📖 Indian Express Explained</h4><p>Daily current affairs</p><a href="https://indianexpress.com/section/explained/" target="_blank">Open →</a></div>
+<div class="res-card"><h4>📖 The Hindu Editorials</h4><p>Editorial analysis</p><a href="https://www.thehindu.com/opinion/editorial/" target="_blank">Open →</a></div>
+<div class="res-card"><h4>📖 Drishti IAS</h4><p>UPSC GS + current affairs</p><a href="https://www.drishtiias.com/" target="_blank">Open →</a></div>
+<div class="res-card"><h4>🧮 GATE Official</h4><p>GATE exam portal</p><a href="https://gate.iitd.ac.in/" target="_blank">Open →</a></div>
+<div class="res-card"><h4>💻 UPSC Official</h4><p>Syllabus, PYQs, notifications</p><a href="https://www.upsc.gov.in/" target="_blank">Open →</a></div>
+<div class="res-card"><h4>📚 Disha PYQs</h4><p>UPSC CSAT + Maths PYQs</p><a href="https://www.dishapublication.com/" target="_blank">Open →</a></div>
+</div>
+<div style="margin-top:12px" id="customLinksContainer"><div class="grid-3" id="customLinksGrid"></div></div>
+<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+<button onclick="addCustomLink()" style="padding:10px 20px;border:2px dashed var(--accent);border-radius:10px;background:transparent;color:var(--accent);font-weight:600;cursor:pointer;transition:.3s;font-size:.85rem">➕ Add Custom Link</button>
+<button onclick="clearCustomLinks()" style="padding:10px 20px;border:2px dashed var(--accent2);border-radius:10px;background:transparent;color:var(--accent2);font-weight:600;cursor:pointer;transition:.3s;font-size:.85rem">🗑️ Clear All</button>
+</div>
+</div>
+
+<div class="panel text-center">
+<h2>☁️ My Private Cloud Storage</h2>
+<div class="flex" style="justify-content:center;">
+<a href="[PASTE_GS_NCERT_DRIVE]" target="_blank" class="cloud-btn">📚 GS NCERTs</a>
+<a href="[PASTE_GS_BOOKS_DRIVE]" target="_blank" class="cloud-btn blue">📗 GS Core Books</a>
+<a href="[PASTE_MATHS_DRIVE]" target="_blank" class="cloud-btn purple">🧮 Maths Optional</a>
+<a href="[PASTE_MNC_DRIVE]" target="_blank" class="cloud-btn" style="background:#1e1e2e">💻 MnC & GATE</a>
+<a href="[PASTE_LANGUAGE_DRIVE]" target="_blank" class="cloud-btn blue">🗣️ Language Resources</a>
+</div>
+</div>
+</div>
+
+<!-- =================== TAB 2: GS TRACKER =================== -->
+<div class="tab-pane" id="tab2">
+<div class="panel">
+<h2>📚 General Studies — Phase-wise Tracker</h2>
+<p>Complete UPSC GS syllabus broken into micro-topics across 3 levels. Each checkbox auto-saves to localStorage. Progress bars update in real-time.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+<span style="font-size:.8rem;background:var(--card2);padding:4px 12px;border-radius:12px">📈 Level 1: Foundations (NCERTs)</span>
+<span style="font-size:.8rem;background:var(--card2);padding:4px 12px;border-radius:12px">📗 Level 2: Core Standard Books</span>
+<span style="font-size:.8rem;background:var(--card2);padding:4px 12px;border-radius:12px">📕 Level 3: Mains Specific</span>
+</div>
+</div>
+
+<div id="gsContent"></div>
+
+<div class="panel" style="margin-top:10px;">
+<h2>☁️ GS Cloud Storage</h2>
+<div class="flex">
+<a href="[PASTE_NCERT_DRIVE]" target="_blank" class="cloud-btn">📘 NCERT PDFs</a>
+<a href="[PASTE_LAXMIKANTH]" target="_blank" class="cloud-btn blue">📗 Laxmikanth</a>
+<a href="[PASTE_SPECTRUM]" target="_blank" class="cloud-btn purple">📗 Spectrum Modern</a>
+<a href="[PASTE_LEONG]" target="_blank" class="cloud-btn" style="background:#1e1e2e">🌍 Leong Geography</a>
+<a href="[PASTE_ECONOMY]" target="_blank" class="cloud-btn blue">💰 Economy Notes</a>
+<a href="[PASTE_ETHICS]" target="_blank" class="cloud-btn purple">⚖️ Ethics & Case Studies</a>
+</div>
+</div>
+</div>
+
+<!-- =================== TAB 3: LANGUAGE TRACK =================== -->
+<div class="tab-pane" id="tab3">
+<div class="panel">
+<h2>🗣️ Language & Expression Track</h2>
+<p>English (Tarun Grover + Word Power Made Easy) → Hindi (Vyakaran + Dainik Jagran) → Mains Essay & Answer Writing</p>
+</div>
+<div id="langContent"></div>
+
+<div class="panel">
+<h2>☁️ Language Resources Cloud</h2>
+<div class="flex">
+<a href="[PASTE_TARUN_GROVER]" target="_blank" class="cloud-btn">🇬🇧 Tarun Grover English</a>
+<a href="[PASTE_WPME]" target="_blank" class="cloud-btn blue">📖 Word Power Made Easy</a>
+<a href="[PASTE_HINDI]" target="_blank" class="cloud-btn purple">🇮🇳 Hindi Vyakaran</a>
+<a href="[PASTE_ESSAY]" target="_blank" class="cloud-btn" style="background:#1e1e2e">✍️ Essay Writing</a>
+</div>
+</div>
+
+<div class="panel">
+<h2>🔗 Direct YouTube Playlists</h2>
+<div class="grid-3">
+<div class="res-card"><h4>Tarun Grover English</h4><p>Full grammar playlists</p><a href="https://www.youtube.com/@TarunGroverEnglish" target="_blank">Watch →</a></div>
+<div class="res-card"><h4>Word Power Made Easy</h4><p>Vocabulary root word method</p><a href="https://www.youtube.com/results?search_query=word+power+made+easy+vocabulary+root+words" target="_blank">Watch →</a></div>
+<div class="res-card"><h4>Anudeep Durishetty</h4><p>Essay & Answer Writing (Topper)</p><a href="https://www.youtube.com/results?search_query=anudeep+durishetty+essay+writing" target="_blank">Watch →</a></div>
+</div>
+</div>
+</div>
+
+<!-- =================== TAB 4: MNC · GATE · MATHS =================== -->
+<div class="tab-pane" id="tab4">
+<div class="panel">
+<h2>🖥️ MnC · GATE CS/DA · UPSC Maths Optional</h2>
+<p>Complete IISc Bangalore B.Tech Mathematics & Computing roadmap + GATE DA/CS subjects + UPSC Maths Optional 20% extra. Based on the premium 128-credit structure.</p>
+</div>
+
+<!-- PROGRAM STRUCTURE -->
+<div class="panel" style="border-left:3px solid var(--accent2)">
+<h2>📊 B.Tech MnC — Programme Structure (128 Credits)</h2>
+<div class="grid-2">
+<div><p><strong>Core Courses:</strong> 50 Credits — Advanced Mathematics (Linear Algebra, Probability, Analysis) & Computing (DSA, Automata, AI/ML)</p></div>
+<div><p><strong>Breadth Soft Core:</strong> 14 Credits — Physics, Chemistry, Biology, Material Science, Earth Science</p></div>
+<div><p><strong>Humanities:</strong> 9 Credits — Mandatory humanities & social science courses</p></div>
+<div><p><strong>Soft Core:</strong> 21 Credits — Balance Maths (≥6cr) & Computing (≥6cr). Clash rules: E1 222/E2 202/MA 262 choose 1; E2 212/E0 298/MA 219 choose 1; E0 220/MA 216 choose 1</p></div>
+<div><p><strong>ISP/Project/Electives:</strong> 34 Credits — Sem 7-8: ISP (12cr max) + Open electives across IISc</p></div>
+<div><p><strong>Duration:</strong> 4 Years · 8 Semesters · Start: August · Bengaluru</p></div>
+</div>
+</div>
+
+<!-- SPECIALIZATION TRACKS -->
+<div class="panel">
+<h2>🎯 Specialized Study Tracks (Sem 5-8)</h2>
+<div class="grid-2">
+<div class="res-card" style="border-left-color:var(--accent)"><h4>🤖 AI & Machine Learning</h4><p>Advanced ML, Deep Learning, RL, Computer Vision, NLP</p></div>
+<div class="res-card" style="border-left-color:#2563eb"><h4>⚙️ Theoretical Computer Science</h4><p>Advanced Algorithms, Complexity, Cryptography, Quantum</p></div>
+<div class="res-card" style="border-left-color:#7c3aed"><h4>🔬 Quantum Computing</h4><p>Quantum algorithms, Info Theory, Error correction</p></div>
+<div class="res-card" style="border-left-color:#059669"><h4>💰 Mathematical Finance</h4><p>Stochastic Calculus, Risk Mgmt, Derivative Pricing</p></div>
+<div class="res-card" style="border-left-color:#db2777"><h4>🧬 Computational Biology & Signal Processing</h4><p>Bioinformatics, Genomics, Biological signal processing</p></div>
+</div>
+</div>
+
+<!-- SEMESTER-WISE MNC ROADMAP -->
+<div class="panel">
+<h2>📖 MnC Semester-wise IISc Roadmap</h2>
+<p style="margin-bottom:10px">Click semester buttons to view full course details with instructors, topics, and recommended resources.</p>
+<div class="flex" style="margin-bottom:12px">
+<button class="sem-btn-mnc active" data-mnc="1">Sem 1</button>
+<button class="sem-btn-mnc" data-mnc="2">Sem 2</button>
+<button class="sem-btn-mnc" data-mnc="3">Sem 3</button>
+<button class="sem-btn-mnc" data-mnc="4">Sem 4</button>
+<button class="sem-btn-mnc" data-mnc="5">Sem 5-8</button>
+</div>
+<div id="mncSemContent"></div>
+</div>
+
+<!-- FULL ELECTIVES CHECKLIST -->
+<div class="panel">
+<h2>📋 Complete Electives — Maths (MA) + CSA (E0) + Other Depts</h2>
+<p>Full checklist of all IISc elective courses available for B.Tech MnC. Check off courses as you explore or complete them.</p>
+</div>
+<div id="electivesContent"></div>
+
+<!-- CHECKLIST TRACKER -->
+<div id="gateContent"></div>
+
+<div class="panel">
+<h2>☁️ Technical Cloud Storage</h2>
+<div class="flex">
+<a href="[PASTE_IISC_NOTES]" target="_blank" class="cloud-btn">📘 IISc Roadmap Notes</a>
+<a href="[PASTE_DSA]" target="_blank" class="cloud-btn blue">💻 C++ DSA (Apna College)</a>
+<a href="[PASTE_GATE_PYQ]" target="_blank" class="cloud-btn purple">🧮 GATE Solved Papers</a>
+<a href="[PASTE_UPSC_MATHS]" target="_blank" class="cloud-btn" style="background:#1e1e2e">🧮 UPSC Maths PYQs</a>
+<a href="[PASTE_IISC_CATALOGUE]" target="_blank" class="cloud-btn" style="background:#7c3aed">📒 IISc Course Catalogue</a>
+</div>
+</div>
+
+<div class="panel">
+<h2>🔗 Direct Links</h2>
+<div class="grid-3">
+<div class="res-card"><h4>Apna College — C++ DSA</h4><p>Shradha Ma'am full course</p><a href="https://www.youtube.com/@ApnaCollegeOfficial" target="_blank">Watch →</a></div>
+<div class="res-card"><h4>IISc B.Tech MnC Official</h4><p>Program page with detailed curriculum</p><a href="https://btech-ug.iisc.ac.in/programs/mathematics-and-computing" target="_blank">Visit →</a></div>
+<div class="res-card"><h4>GATE CS/DA Syllabus</h4><p>Official GATE 2025-26</p><a href="https://gate.iitd.ac.in/documents/syllabus.php" target="_blank">Visit →</a></div>
+<div class="res-card"><h4>NPTEL — MnC Courses</h4><p>IIT/IISc lectures for all topics</p><a href="https://nptel.ac.in/" target="_blank">Visit →</a></div>
+<div class="res-card"><h4>Abdul Bari — Algorithms</h4><p>Best DSA whiteboard tutorials</p><a href="https://www.youtube.com/@abdul_bari" target="_blank">Watch →</a></div>
+<div class="res-card"><h4>Striver — A2Z DSA</h4><p>Complete DSA placement roadmap</p><a href="https://www.youtube.com/@takeUforward" target="_blank">Watch →</a></div>
+</div>
+</div>
+</div>
+
+<!-- =================== TAB 5: UPSC GS FULL SYLLABUS =================== -->
+<div class="tab-pane" id="tab5">
+<div class="panel"><h2>📋 UPSC CSE Full Syllabus — Prelims & Mains Tracker</h2><p>Complete syllabus checklist for UPSC Civil Services Examination. Check off topics as you cover them.</p></div>
+<div id="upscGSContent"></div>
+<div class="panel"><h2>☁️ UPSC Resources</h2><div class="flex">
+<a class="cloud-btn blue" href="https://www.drishtiias.com/upsc-syllabus" target="_blank">Official UPSC Syllabus</a>
+<a class="cloud-btn blue" href="https://insightsonindia.com/wp-content/uploads/2013/07/upsc-syllabus.pdf" target="_blank">UPSC Syllabus PDF</a>
+<a class="cloud-btn" href="https://www.upsc.gov.in/" target="_blank">UPSC Official Website</a>
+</div></div>
+</div>
+
+<!-- =================== TAB 6: MATHS OPTIONAL FULL SYLLABUS =================== -->
+<div class="tab-pane" id="tab6">
+<div class="panel"><h2>📐 UPSC Maths Optional — Paper 1 & 2 Detailed Syllabus</h2><p>Complete Mathematics Optional syllabus for UPSC Mains. Every topic from the official syllabus included.</p></div>
+<div id="mathsOptContent"></div>
+<div class="panel"><h2>☁️ Maths Optional Resources</h2><div class="flex">
+<a class="cloud-btn purple" href="https://www.nextias.com/mathematics-optional-syllabus" target="_blank">Detailed Syllabus</a>
+<a class="cloud-btn purple" href="https://www.youtube.com/playlist?list=PLdM-WZokQ4jYfQm6iIBx1sXOfUR73GUBp" target="_blank">Dinesh Sir Lectures</a>
+<a class="cloud-btn" href="https://store.pw.live/blogs/upsc-exams/upsc-maths-optional-syllabus" target="_blank">PW Maths Optional</a>
+</div></div>
+</div>
+
+<!-- =================== TAB 7: FULL PLANNER =================== -->
+<div class="tab-pane" id="tab7">
+<div class="panel"><h2>📅 Full 4-Year Planner — Day-by-Day To-Do</h2>
+<p>Complete daily planner based on your routine + exam timelines. Auto-generates tasks from your 7-day cycle, semester schedule, and exam milestones. Check off tasks as you complete them.</p></div>
+
+<div class="panel" style="border-left:3px solid var(--accent2)">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+<button id="calPrev" class="cloud-btn" style="padding:8px 16px;font-size:.8rem">◀ Prev</button>
+<select id="calMonthSelect" style="padding:8px;border-radius:8px;background:var(--card2);color:var(--text);border:1px solid var(--border);font-size:.85rem"></select>
+<select id="calYearSelect" style="padding:8px;border-radius:8px;background:var(--card2);color:var(--text);border:1px solid var(--border);font-size:.85rem"></select>
+<button id="calNext" class="cloud-btn" style="padding:8px 16px;font-size:.8rem">Next ▶</button>
+<button id="calToday" class="cloud-btn blue" style="padding:8px 16px;font-size:.8rem">📌 Today</button>
+</div>
+
+<div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-size:.75rem">
+<div style="text-align:center;font-weight:700;padding:4px;color:var(--accent2)">Sun</div>
+<div style="text-align:center;font-weight:700;padding:4px">Mon</div>
+<div style="text-align:center;font-weight:700;padding:4px">Tue</div>
+<div style="text-align:center;font-weight:700;padding:4px">Wed</div>
+<div style="text-align:center;font-weight:700;padding:4px">Thu</div>
+<div style="text-align:center;font-weight:700;padding:4px">Fri</div>
+<div style="text-align:center;font-weight:700;padding:4px;color:var(--accent2)">Sat</div>
+</div>
+<div id="calDays" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-size:.75rem"></div>
+
+<div style="margin-top:10px;font-size:.78rem;color:var(--text2);display:flex;gap:10px;flex-wrap:wrap">
+<span>🔴 Milestone</span>
+<span>🟢 Semester</span>
+<span>📌 Today</span>
+<span>✅ Task complete</span>
+</div>
+</div>
+
+<div class="panel">
+<h2 id="dayDetailTitle">📋 Select a day to view tasks</h2>
+<div id="dayDetailContent" style="font-size:.85rem"><p style="color:var(--text2)">Click any date on the calendar above to see your auto-generated to-do list for that day.</p></div>
+</div>
+
+<div class="panel">
+<h2>📊 Weekly Routine Legend</h2>
+<div class="grid-2" style="font-size:.8rem">
+<div><span class="tag gs">GS Days</span> Day 1·3·5 — Polity, History, Geo, Econ, Env, S&T, Ethics</div>
+<div><span class="tag lang">English Day</span> Day 2 — Tarun Grover, WPME, Novels, Express, Hindu</div>
+<div><span class="tag lang">Hindi Day</span> Day 4 — Hindi Vyakaran, Dainik Jagran</div>
+<div><span class="tag both">Dual Lang</span> Day 6 — English + Hindi translation practice</div>
+<div><span class="tag chill">Chill Day</span> Day 7 — 1.5-2H audit + revision, rest off</div>
+</div>
+</div>
+</div>
+
+</div><!-- container -->
+
+<script>
+// ====== DATA ======
+const gsData = {
+'Level 1: NCERT Foundations': [
+{id:'gs1',label:'Polity — Class 11 Indian Constitution at Work',sub:'Ch 1-9: Philosophy, Rights, Gov, Judiciary, Federalism | 🎥 NCERT Foundation (YouTube) | 📝 Prepp.in / ForumIAS quizzes | 📖 NCERT Class 11'},
+{id:'gs2',label:'Geography — Class 11 (Fundamentals of Physical Geo)',sub:'Geomorphology, Climatology, Oceanography | 🎥 Amit Sengupta / Geography Now | 📝 Drishti IAS MCQs | 📖 NCERT Class 11 Physical'},
+{id:'gs3',label:'Geography — Class 11 (India Physical Environment)',sub:'Physiography, Drainage, Climate, Soils | 🎥 Amit Sengupta / Parcham | 📝 StudyIQ quizzes | 📖 NCERT Class 11 India Physical'},
+{id:'gs4',label:'Geography — Class 12 (Fundamentals of Human Geo)',sub:'Population, Migration, Settlement, Agriculture | 🎥 TheGeoecologist | 📝 NextIAS tests | 📖 NCERT Class 12 Human'},
+{id:'gs5',label:'Geography — Class 12 (India People & Economy)',sub:'Population, Resources, Industries, Transport | 🎥 TheGeoecologist | 📝 VisionIAS tests | 📖 NCERT Class 12 India People'},
+{id:'gs6',label:'Economy — Class 11 Indian Economic Development',sub:'1947-90 reforms, Liberalization, Poverty, Infrastructure | 🎥 Pratham Singh / Mrunal | 📝 Mrunal.org quizzes | 📖 NCERT Class 11 Eco'},
+{id:'gs7',label:'Economy — Class 12 Introductory Macroeconomics',sub:'National Income, Money, Banking, Government Budget, BOP | 🎥 Pratham Singh / Mrunal | 📝 Mrunal.org quizzes | 📖 NCERT Class 12 Macro'},
+{id:'gs8',label:'History — Old NCERT Ancient (R.S. Sharma)',sub:'Stone Age to Mauryan to Gupta, Cultural evolution | 🎥 OnlyIAS Pratik Nayak | 📝 Prepp.in PYQs | 📖 Old NCERT RS Sharma'},
+{id:'gs9',label:'History — Old NCERT Medieval (Satish Chandra)',sub:'Delhi Sultanate, Mughals, Regional kingdoms | 🎥 OnlyIAS Pratik Nayak | 📝 Prepp.in PYQs | 📖 Old NCERT Satish Chandra'},
+{id:'gs10',label:'History — Old NCERT Modern (Bipan Chandra)',sub:'British expansion, Revolt of 1857, National Movement | 🎥 OnlyIAS Pratik Nayak / Spectrum Playlist | 📝 Prepp.in PYQs | 📖 Old NCERT Bipan Chandra'},
+{id:'gs11',label:'Art & Culture — Class 11 An Intro to Indian Art',sub:'Architecture, Sculpture, Painting, Music, Dance | 🎥 OnlyIAS Pratik Nayak | 📝 Prepp.in PYQs | 📖 NCERT Class 11 Intro to Art'},
+],
+'Level 2: Core Standard Books': [
+{id:'gs12',label:'Polity — Indian Polity by M. Laxmikanth',sub:'Complete 93 chapters + schedules + amendments | 🎥 M. Laxmikanth Playlist (StudyIQ/OnlyIAS) | 📝 ForumIAS Laxmikanth tests | 📖 Indian Polity by Laxmikanth'},
+{id:'gs13',label:'Modern History — Spectrum (Rajiv Ahir)',sub:'Advent of Europeans to Independence, full chronological | 🎥 Spectrum Playlist (StudyIQ) | 📝 Prepp.in Spectrum MCQs | 📖 Spectrum by Rajiv Ahir'},
+{id:'gs14',label:'Geography — G.C. Leong (Part 1)',sub:'Weathering, Karst, Arid, Glacial, Coastal, Coral reefs | 🎥 Amit Sengupta Leong series | 📝 PMF IAS MCQs | 📖 GC Leong Physical Geography'},
+{id:'gs15',label:'Atlas — Oxford Student Atlas',sub:'Maps, places, rivers, mountain ranges, climate zones | 🎥 Oxford Atlas tutorials | 📝 Map-based PYQs | 📖 Oxford Student Atlas'},
+{id:'gs16',label:'Economy — Vivek Singh OR Mrunal Patel Notes',sub:'All concepts macro/micro, budgeting, fiscal policy | 🎥 Vivek Singh / Mrunal Patel | 📝 Mrunal.org Economy MCQs | 📖 Vivek Singh Economy'},
+{id:'gs17',label:'Environment — PMF IAS Environment',sub:'Ecology, Biodiversity, Climate Change, Pollution, Acts | 🎥 PMF IAS / Shankar IAS videos | 📝 PMF IAS MCQs | 📖 PMF IAS Environment'},
+{id:'gs18',label:'Art & Culture — Nitin Singhania (Selected)',sub:'Architecture (Temple, Indo-Islamic, Modern), Paintings, Dance | 🎥 Nitin Singhania playlist | 📝 ForumIAS quizzes | 📖 Nitin Singhania Art&Culture'},
+{id:'gs19',label:'Science & Tech — Current Affairs + PT 365',sub:'Space, Defense, Biotech, Nanotech, AI, Health | 🎥 PT 365 Science & Tech | 📝 PT 365 MCQs | 📖 Vision IAS PT 365'},
+],
+'Level 3: Mains Specific Subjects': [
+{id:'gs20',label:'World History — Pratik Nayak / Vision IAS',sub:'French Rev, Industrial Rev, WW1, WW2, Cold War, UN | 🎥 Pratik Nayak World History | 📝 Mains PYQs practice | 📖 Vision IAS World History notes'},
+{id:'gs21',label:'Post-Independence India — Nitin Sangwan',sub:'Integration, Nehruvian era, Green Revolution, LPG 1991 | 🎥 Nitin Sangwan lectures | 📝 Mains PYQs | 📖 Nitin Sangwan notes'},
+{id:'gs22',label:'Post-Indep — Class 12 NIOS Politics Since Indep',sub:'Congress system, Emergency, Coalition era | 🎥 NIOS online classes | 📝 Mains PYQs | 📖 NIOS Class 12 Politics'},
+{id:'gs23',label:'Indian Society — Class 12 Sociology NCERTs',sub:'Social stratification, Religion, Caste, Family, Change | 🎥 Sleepy Classes Sociology | 📝 Mains PYQs | 📖 NCERT Class 12 Sociology'},
+{id:'gs24',label:'Indian Soc — Vision IAS Value-Added Notes',sub:'Women, Urbanization, Globalization effects on society | 🎥 VisionIAS Society lectures | 📝 Mains PYQs | 📖 VisionIAS Value-Added notes'},
+{id:'gs25',label:'Governance & Social Justice — Vision IAS Notes',sub:'Budgeting, E-governance, Citizen charters, Welfare schemes | 🎥 VisionIAS Governance | 📝 Mains PYQs | 📖 VisionIAS Governance notes'},
+{id:'gs26',label:'IR — Pawneet Singh / Vision IAS Monthly',sub:'Bilateral/regional groupings, UN, India\'s foreign policy | 🎥 Pawneet Singh IR | 📝 Mains PYQs | 📖 VisionIAS IR notes'},
+{id:'gs27',label:'Internal Security — Ashok Kumar IPS',sub:'Terrorism, Naxalism, Cyber security, Border security | 🎥 Ashok Kumar IPS lectures | 📝 Mains PYQs | 📖 Ashok Kumar Internal Security'},
+{id:'gs28',label:'Disaster Mgmt — CBSE Class 11 + Vision IAS',sub:'Natural disasters, NDMA, Mitigation, Response | 🎥 VisionIAS Disaster Mgmt | 📝 Mains PYQs | 📖 CBSE Class 11 + VisionIAS notes'},
+{id:'gs29',label:'Ethics — Lexicon for Ethics',sub:'Ethical theories, moral thinkers, applied ethics | 🎥 Lexicon Ethics playlist | 📝 Mains case studies PYQs | 📖 Lexicon for Ethics'},
+{id:'gs30',label:'Ethics — Decode Ethics by Mudit Jain',sub:'Case studies framework, approach, 50+ solved cases | 🎥 Mudit Jain lectures | 📝 Mains case studies PYQs | 📖 Decode Ethics by Mudit Jain'},
+]
+};
+
+const langData = {
+'English Core': [
+{id:'l1',label:'Tarun Grover YouTube — Grammar Basics',sub:'Noun, Pronoun, Adjective, Verb, Tense | 🎥 Tarun Grover YouTube | 📝 ExamDX English quizzes | 📖 Wren & Martin'},
+{id:'l2',label:'Tarun Grover YouTube — Advanced Grammar',sub:'Voice, Narration, Conditional, Clauses, Punctuation | 🎥 Tarun Grover | 📝 Testbook English | 📖 High School Grammar by Wren & Martin'},
+{id:'l3',label:'Word Power Made Easy — Session 1-10',sub:'Root words: Latin/Greek prefixes & suffixes | 🎥 Vocabulary by Tarun Grover | 📝 Word Power Made Easy app | 📖 Word Power Made Easy by Norman Lewis'},
+{id:'l4',label:'Word Power Made Easy — Session 11-25',sub:'The vocabulary of science, medicine, emotions | 🎥 Vocabulary with Sana | 📝 Quizlet flashcards | 📖 Word Power Made Easy'},
+{id:'l5',label:'Word Power Made Easy — Session 26-42',sub:'Business, law, politics vocabulary | 🎥 The Vocabulary Show | 📝 Magoosh vocab app | 📖 Word Power Made Easy'},
+{id:'l6',label:'Simple Novels (Sudha Murty, Ruskin Bond, Chetan Bhagat)',sub:'Build reading habit + comprehension | 🎥 Audiobooks on YouTube | 📝 Goodreads summaries | 📖 Sudha Murty/Ruskin Bond/Chetan Bhagat'},
+{id:'l7',label:'Indian Express — Explained Page Daily',sub:'Policy, economy, science explained in simple English | 🎥 IE Explained analysis | 📝 Daily reading + vocab diary | 📖 Indian Express Explained Page'},
+{id:'l8',label:'The Hindu Editorials — Daily Reading',sub:'Editorial + OP-ED analysis, vocabulary marking | 🎥 The Hindu Analysis YouTube | 📝 Editorial summary practice | 📖 The Hindu Daily'},
+],
+'Hindi Core': [
+{id:'l9',label:'Hindi Vyakaran — Basics',sub:'Varn, Shabd, Sangya, Sarvanam, Visheshan, Kriya | 🎥 Hindi Vyakaran by Samir Singh | 📝 Hindi Madhyam test | 📖 Samanya Hindi by Hardev Bahri'},
+{id:'l10',label:'Hindi Vyakaran — Advanced',sub:'Kaal, Vachya, Sandhi, Samas, Alankar, Chhand | 🎥 Hindi Vyakaran Advanced playlist | 📝 Online Hindi test series | 📖 Vyakaran Pradeep by Dr. Vashisht'},
+{id:'l11',label:'Dainik Jagran Rashtriya Sanskaran',sub:'Daily editorial reading, vocab marking | 🎥 Dainik Jagran editorial analysis | 📝 Vocab noting practice | 📖 Dainik Jagran Rashtriya Sanskaran'},
+{id:'l12',label:'Hindi Writing Practice',sub:'Note-making, paraphrasing, precis writing | 🎥 Hindi writing tips YouTube | 📝 Daily 1 page writing | 📖 Hindi Nibandh Sangrah'},
+],
+'Mains Essentials': [
+{id:'l13',label:'Anudeep Durishetty — Essay Writing',sub:'Structure, types of essays, 10+ topper essays | 🎥 Anudeep Durishetty essay strategy | 📝 10+ topper essays review | 📖 Anudeep Durishetty essay notes'},
+{id:'l14',label:'Anudeep Durishetty — Answer Writing',sub:'Framework, keywords, presentation, time management | 🎥 Anudeep Durishetty answer writing | 📝 Daily answer writing practice | 📖 Anudeep Durishetty framework notes'},
+{id:'l15',label:'Translation Practice (English ⇄ Hindi)',sub:'Daily 1 paragraph each direction | 🎥 Translation techniques videos | 📝 Daily Eng-Hindi translation | 📖 Standard translation practice books'},
+]
+};
+
+// ====== MNC SEMESTER DATA (Full IISc Roadmap) ======
+const mncSem = {
+1: { title:'Semester 1: Foundation Courses', credits:'~18-20 Credits', courses:[
+{code:'UENG 101',name:'Algorithms & Programming',credits:'3:1',instr:'L. Sunil Chandran, Viraj Kumar',
+ topics:'Python basics (data types, recursion, modules) + Basic DSA (Searching, Sorting, Big O, Hash Tables, BST, Heaps, Graphs) + Intro to C (Pointers, Dynamic Memory)',
+ swayam:'"The Joy of Computing using Python" (IIT Ropar) + "DSA" Prof. Naveen Garg (IIT Delhi) + "Programming in C" (IIT Kharagpur)',
+ yt:'Abdul Bari (Algorithms), Striver/takeUforward (A2Z DSA), freeCodeCamp (Python), MIT OCW (Intro to CS), CodeWithHarry (Basics), Corey Schafer (Python), MyCodeSchool (C Pointers)',
+ books:'The C Programming Language by Kernighan & Ritchie · Intro to Programming in Python by Sedgewick · Data Structures & Algorithm Analysis in C by Mark Allen Weiss · Intro to Algorithms by CLRS (Cormen, Leiserson, Rivest, Stein)'},
+{code:'UMA 101',name:'Analysis & Linear Algebra I',credits:'4:0',instr:'Soumya Das',
+ topics:'One-variable Calculus (Real/Complex numbers, Sequences & Series, Continuity, Maxima/Minima, Taylor Series, Integration) + Linear Algebra (Vector spaces, Basis, Dimension, Linear transformations, Matrices)',
+ swayam:'"Calculus of One Real Variable" Prof. Joydeep Dutta (IIT Kanpur) + "Linear Algebra" (IIT Bombay/Kanpur)',
+ yt:'3Blue1Brown (Essence of Linear Algebra + Calculus), Prof. Gilbert Strang (MIT OCW), Professor Leonard (Calculus)',
+ books:'Calculus Vol. I by T.M. Apostol · Linear Algebra and its Applications by Gilbert Strang'},
+{code:'UBL 101',name:'Introductory Biology I',credits:'3:1',instr:'Sumanta Bagchi',
+ topics:'Microbiology, Immunology, Lab techniques (chromatography, SDS-PAGE)',
+ swayam:'"Introductory Biology" (IIT Kharagpur) + "Biochemistry" Prof. S. Das (NPTEL)',
+ yt:'Shomu\'s Biology (Molecular Bio), MIT OCW 7.012 (Eric Lander), Ninja Nerd (Medical/Physiology)',
+ books:'Campbell Biology · Molecular Biology of the Cell by Alberts'},
+{code:'UCY 101',name:'Introductory Chemistry I',credits:'3:1',instr:'Anshu Pandey',
+ topics:'Quantum Chemistry, Chemical Bonding, Thermodynamics, Kinetics, Colligative properties',
+ swayam:'"Quantum Mechanics and Molecular Spectroscopy" Prof. Mangala Sunder Krishnan',
+ yt:'MIT OCW Principles of Chemical Science, TMP Chem, ALK Sir (Mohit Tyagi)',
+ books:'Physical Chemistry by McQuarrie & Simon · Physical Chemistry by Silbey & Alberty'},
+{code:'UPH 101',name:'Introductory Physics I',credits:'3:1',instr:'Sebabrata Mukherjee',
+ topics:'Advanced Mechanics (Laws of motion, Line/Surface integrals, Systems of particles, Gyroscope precession, Central forces, Kepler\'s laws) + Oscillations & Waves (Damped/forced pendulum, Coupled oscillators, Normal modes, Fourier series)',
+ swayam:'"Intro to Mechanics" Prof. Mahendra Verma (IIT Kanpur) + "Waves and Oscillations" Prof. M.S. Santhanam',
+ yt:'MIT OCW 8.01 (Walter Lewin), MIT OCW 8.03 Vibrations & Waves, Professor Leonard (Physics fundamentals), Physics Sir JEE (Nitin Sachan), Ramamurti Shankar (Yale)',
+ books:'An Intro to Mechanics by Kleppner & Kolenkow · Mechanics by C. Kittel (Berkeley Vol. 1) · Vector Analysis by M.R. Spiegel (Schaum)'}
+]},
+2: { title:'Semester 2: Broadening Foundations', credits:'~18-20 Credits', courses:[
+{code:'UENG 102',name:'Electrical & Electronics Engg',credits:'3:1',instr:'Various',
+ topics:'Network Theory (KVL/KCL, Thevenin/Norton, RLC, Laplace, Bode) + Analog Electronics (Diodes, MOSFETs, Op-Amps) + Digital Logic (Boolean, K-maps, Flip-flops, FSM, Verilog)',
+ swayam:'"Basic Electrical Circuits" Prof. Nagendra Krishnapura (IIT Madras) + "Analog Circuits" (IIT Bombay) + "Digital Circuits" (IIT Kharagpur)',
+ yt:'Neso Academy (Network Theory + Digital Electronics), Prof. Behzad Razavi (Analog), Ben Eater (Logic/CPU), Nandland (Verilog)',
+ books:'Electrical Engg by Hambley · Microelectronic Circuits by Sedra & Smith (Bible) · Digital Logic with Verilog by Brown & Vranesic'},
+{code:'UMA 102',name:'Analysis & Linear Algebra II',credits:'4:0',instr:'Purvi Gupta',
+ topics:'Advanced LA (Inner products, Orthogonality, Eigenvalues, Diagonalisation) + Multivariable Calculus (Partial/Total derivatives, Chain rule, Lagrange multipliers, Double/Triple integrals, Green\'s/Stokes\'/Divergence theorems) + Intro ODEs (Linear ODEs, Canonical forms)',
+ swayam:'"Multivariable Calculus" (IIT Roorkee/Bombay) + "Linear Algebra" (IIT Kanpur) + "ODE" (IIT Madras)',
+ yt:'Professor Leonard (Multivariable), MIT OCW 18.06 (Strang), 3Blue1Brown (Eigenvalues), Dr. Gajendra Purohit',
+ books:'Calculus Vol. II by T.M. Apostol · Linear Algebra by Strang · Differential Equations by Hirsch, Smale & Devaney'},
+{code:'UMC 102',name:'Computer Systems',credits:'3:1',instr:'Vinod Ganapathy, Sanchari Sen',
+ topics:'Data Representation, Instruction Execution, Memory Layout (stack/heap), Exceptions, OS Concepts (Process, Virtual Memory, File, Concurrency, Parallelism)',
+ swayam:'"Computer Architecture & Organization" (IIT Kharagpur) + "Intro to OS" Prof. Chester Rebeiro (IIT Madras)',
+ yt:'Jacob Sorber (Systems), Ben Eater (Hardware), Gate Smashers (OS), Neso Academy (OS)',
+ books:'Computer Systems: A Programmer\'s Perspective by Bryant & O\'Hallaron (CS:APP) — The Bible'},
+{code:'UMC 103A',name:'Discrete Mathematics',credits:'3:1',instr:'C. Pandu Rangan',
+ topics:'Mathematical Logic (Props, Predicates, Proofs, Induction) + Sets/Functions/Relations + Counting (Pigeonhole, Permutations/Combinations, Recurrence, Generating Functions) + Graph Theory (Models, Matchings, Hall\'s theorem, Euler/Hamilton, Coloring, Trees)',
+ swayam:'"Discrete Mathematics" Prof. Sudarshan Iyengar (IIT Ropar) — most engaging NPTEL course',
+ yt:'Abdul Bari (Graph Theory), TrevTutor (Discrete Math), Gate Smashers, Neso Academy',
+ books:'Discrete Mathematics by Kenneth H. Rosen · Logic & Discrete Math by Grassmann & Tremblay · Math for CS by Lehman & Leighton (MIT)'},
+{code:'BREADTH',name:'Choose ANY ONE from:',credits:'3:1 each',instr:'Various',
+ topics:'UBL 102 (Biology II) · UCY 102 (Chemistry II — Inorganic) · UPH 102 (Physics II — Elec-Mag & Optics) · UENG 103 (Earth & Environment)',
+ swayam:'NPTEL courses available for all breadth options',
+ yt:'Shomu\'s Biology, MIT OCW, Bozeman Science, Professor Dave',
+ books:'Molecular Biology by Alberts, Inorganic Chem by J.D. Lee, Electrodynamics by Griffiths, Earth Science by Ryan'}
+]},
+3: { title:'Semester 3: Advanced Computing & Math', credits:'~18-20 Credits', courses:[
+{code:'UMA 201',name:'Probability & Statistics',credits:'4:0',instr:'Sanchayan Sen',
+ topics:'Core Probability (Conditional, Bayes, Distributions, MGF, Limit Theorems) + Inferential Statistics (Sampling, Parameter estimation, Hypothesis testing, Regression, Correlation, ANOVA)',
+ swayam:'"Probability and Statistics" Prof. Somesh Kumar (IIT Kharagpur)',
+ yt:'MIT OCW 6.041 (Tsitsiklis), StatQuest (Josh Starmer), 3Blue1Brown, MarinStatsLectures',
+ books:'A First Course in Probability by Sheldon Ross · Intro to Probability & Statistics by Ross · Probability Theory Vol. 1 by W. Feller'},
+{code:'UMC 201',name:'Data Structures & Algorithms',credits:'3:1',instr:'C. Pandu Rangan',
+ topics:'Complexity & Standard DS (Big O, Arrays, Lists, Stacks, Queues, Heaps, BST) + Algorithmic Paradigms (Divide & Conquer, Greedy, DP) + Graph Algorithms (BFS/DFS, Shortest Paths, MST) + Advanced DS (Union Find, Hashing, Amortized, Splay/Fibonacci trees)',
+ swayam:'"DSA" Prof. Naveen Garg (IIT Delhi) + "Design & Analysis of Algorithms" Prof. Madhavan Mukund (CMI)',
+ yt:'Striver (takeUforward A2Z DSA), Abdul Bari (Algorithms), CodeHelp (Babbar), MIT OCW 6.006, WilliamFiset',
+ books:'Data Structures & Algorithm Analysis in C by Mark Allen Weiss · Algorithm Design by Kleinberg & Tardos · Intro to Algorithms (CLRS) — The Bible'},
+{code:'UMC 202',name:'Numerical Methods',credits:'3:1',instr:'Ratikanta Behera',
+ topics:'Root Finding (Newton-Raphson, Gauss elimination, Relaxation) + Numerical Integration (Newton-Cotes, Gaussian Quadrature) + ODE Solvers (Euler, RK4, Predictor-Corrector, Stiff) + PDEs & FEM (Shooting, Galerkin, Finite Difference)',
+ swayam:'"Numerical Analysis" Prof. Sanjeev Sabnis (IIT Bombay) + "Numerical Methods" Prof. Ameeya Nayak (IIT Roorkee)',
+ yt:'Dr. Gajendra Purohit, Neso Academy, Jeffrey Chasnov (HKUST), MATLAB Seminar',
+ books:'Numerical Analysis by Burden & Faires · Numerical Recipes in C by Press et al. (Holy Grail for coding)'},
+{code:'BREADTH',name:'Choose ANY ONE from:',credits:'3:1 each',instr:'Various',
+ topics:'UBL 201 (Biology III — Molecular Bio, Immunology, Neuroscience) · UCY 201 (Chemistry III — Organic Chemistry, Stereochemistry) · UPH 201 (Physics III — Thermodynamics, Relativity, Quantum) · UENG 201 (Materials Science — Crystallography, Semiconductors, Band structure)',
+ swayam:'NPTEL courses: Molecular Biology, Organic Chemistry, Thermodynamics, Materials Science',
+ yt:'Shomu\'s Biology, Ninja Nerd, The Organic Chem Tutor, MIT OCW, Professor Leonard, The Efficient Engineer',
+ books:'Molecular Cell Biology by Lodish · Organic Chemistry by Solomons · University Physics by Young & Freedman · Materials Science by Callister'}
+]},
+4: { title:'Semester 4: AI/ML & Theory Core', credits:'~16-18 Credits', courses:[
+{code:'UM 204',name:'Analysis (Real Analysis)',credits:'3:1',instr:'Purvi Gupta',
+ topics:'Set Theory (Countable/Uncountable) + Metric Spaces & Topology (Open/closed sets, Compactness, Heine-Borel, Connectedness) + Sequences/Series Convergence (Absolute/Conditional) + Uniform Continuity + Riemann Integral + FTC + Weierstrass Approximation',
+ swayam:'"Real Analysis" Prof. S.H. Kulkarni (IIT Madras) + "Calculus of One Real Variable" (IIT Kanpur)',
+ yt:'Francis Su (Harvey Mudd — legendary), MIT OCW, Michael Penn, The Math Sorcerer, Mathologer, 3Blue1Brown',
+ books:'Analysis I & II by Terence Tao (Mathematics Mozart) · Mathematical Analysis by T.M. Apostol'},
+{code:'UM 205',name:'Algebraic Structures',credits:'3:1',instr:'Arvind Ayyer',
+ topics:'Number Theory (Divisibility, Euclidean algorithm, Primes, Congruences, Fermat/Euler theorems, Ring of integers mod n) + Abstract Algebra (Groups, Permutations, Group actions, Cayley\'s theorem, Dihedral, Rings, Fields) + Set Theory & Combinatorics (Posets, Zorn\'s lemma, Pigeonhole, Möbius inversion, Eulerian tours, Matchings)',
+ swayam:'"Intro to Number Theory" (IIT Ropar) + "Intro to Abstract Algebra" (IIT Madras)',
+ yt:'Socratica (Abstract Algebra — visual), Michael Penn (Number Theory), MathDoctorBob, TrevTutor, Abdul Bari',
+ books:'Elementary Number Theory by D.M. Burton · A First Course in Abstract Algebra by Fraleigh · A Walk Through Combinatorics by Miklos Bona · Groups & Symmetry by M.A. Armstrong'},
+{code:'UMC 203',name:'Intro to AI & ML',credits:'3:1',instr:'Aditya Gopalan, Shishir N Kolathaya',
+ topics:'Supervised Learning (Bayes, Risk minimization, Perceptron, Logistic Regression, SVMs, Kernels, Ensembles, Adaboost) + Deep Learning (MLPs, CNNs, Backpropagation) + Unsupervised (PCA, EM, Generative Models) + Reinforcement Learning (MDPs)',
+ swayam:'"Intro to ML" Prof. Balaraman Ravindran (IIT Madras) + "Deep Learning" (IIT Kharagpur) + "Reinforcement Learning" Ravindran',
+ yt:'StatQuest (Josh Starmer), Stanford CS229 (Andrew Ng — ML God), Andrej Karpathy (Deep Learning), 3Blue1Brown (Neural Networks), MIT 6.S191',
+ books:'Pattern Recognition & ML by Bishop · Deep Learning by Goodfellow, Bengio, Courville · Dive into Deep Learning by Zhang et al. · Elements of Statistical Learning by Hastie'},
+{code:'UMC 205',name:'Automata & Computability',credits:'3:1',instr:'Deepak D\'Souza',
+ topics:'Finite Automata (DFA/NFA, Regular expressions, Pumping lemma, Myhill-Nerode) + Pushdown Automata (CFG, Chomsky normal form, PDA equivalence, Parikh\'s theorem) + Turing Machines (Halting problem, Rice\'s theorems, Gödel\'s Incompleteness)',
+ swayam:'"Theory of Computation" Prof. Raghunath Tewari (IIT Kanpur) + "Intro to Automata" (IIT Kharagpur)',
+ yt:'Neso Academy (TOC Sanjeevani), Gate Smashers (Exam tricks), Easy Theory, MIT OCW 18.404 (Sipser)',
+ books:'Automata & Computability by Dexter Kozen · Intro to Automata by Hopcroft & Ullman (Cinderella Book)'}
+]},
+5: { title:'Semesters 5-8: Specialization & Electives', credits:'Remaining ~56 Credits', isSpec:true }
+};
+
+function renderMnCSem(sem) {
+const d = mncSem[sem]; if(!d) return;
+const el = document.getElementById('mncSemContent');
+if(d.isSpec) {
+el.innerHTML = `<div class="panel">
+<h3>Semesters 5–8: Track-based Learning</h3>
+<p>From Semester 5, there are <strong>no mandatory courses</strong>. You choose a Specialization Track and fulfill Soft Core (21cr) + Open Elective + ISP/Project (34cr) credits.</p>
+<p><strong>Soft Core Rules:</strong> Min 6cr Maths + min 6cr Computing. Clash: E1 222/E2 202/MA 262 (choose 1) · E2 212/E0 298/MA 219 (choose 1) · E0 220/MA 216 (choose 1)</p>
+<p><strong>Maths Soft Core options:</strong> E0 265/E0 350 Convex Optimization (3:1) · E2 202 Random Processes (3:0) · E1 222 Stochastic Models (3:0) · MA 218 Number Theory (3:0) · E0 220 Graph Theory (3:1)</p>
+<p><strong>Projects:</strong> ISP (up to 12cr) in Sem 7-8 · Research/Industry project option available</p>
+</div>`;
+return;
+}
+let html = `<div class="panel"><h3>${d.title}</h3><p style="margin-bottom:12px"><strong>Credits:</strong> ${d.credits}</p>`;
+d.courses.forEach(c => {
+html += `<div class="res-card" style="margin-bottom:12px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.7rem;color:var(--text2);font-weight:600">${c.code}</span><span style="font-size:.75rem;color:var(--text2)">${c.credits}</span></div>
+<h4 style="margin:4px 0">${c.name}</h4>
+${c.instr ? `<p style="font-size:.8rem;color:var(--text2)"><strong>Instructor(s):</strong> ${c.instr}</p>` : ''}
+<p style="font-size:.82rem;margin:6px 0"><strong>Topics:</strong><br>${c.topics}</p>
+<p style="font-size:.82rem"><strong>SWAYAM/NPTEL:</strong> ${c.swayam}</p>
+<p style="font-size:.82rem"><strong>YouTube:</strong> ${c.yt}</p>
+<p style="font-size:.82rem"><strong>Books:</strong> ${c.books}</p>
+</div>`;
+});
+html += `</div>`;
+el.innerHTML = html;
+}
+
+const gateData = {
+'C++ DSA & Coding Track': [
+{id:'m1',label:'C++ Basics — Shradha Ma\'am Apna College',sub:'Variables, loops, functions, arrays, strings, pointers | 🎥 Apna College (Shradha Ma\'am) | 📝 HackerRank C++ | 📖 Let Us C++ by Yashwant Kanetkar'},
+{id:'m2',label:'C++ OOPs — Classes, Inheritance, Polymorphism',sub:'Encapsulation, virtual functions, templates | 🎥 CodeWithHarry OOP | 📝 GeeksforGeeks OOP | 📖 Object Oriented Programming in C++ by Robert Lafore'},
+{id:'m3',label:'Flowcharts & Pseudocode Mastery',sub:'Logic building, algorithm representation | 🎥 Apna College logic building | 📝 Coding Ninjas pseudocode | 📖 How to Solve It by Polya'},
+{id:'m4',label:'Data Structures — Arrays, Linked List, Stack, Queue',sub:'Implementation + STL | 🎥 Striver A2Z DSA | 📝 LeetCode Blind 75 | 📖 Data Structures by Mark Allen Weiss'},
+{id:'m5',label:'Data Structures — Trees, BST, Heaps, Hashing',sub:'Traversals, AVL, priority queue, collision handling | 🎥 Abdul Bari DSA | 📝 LeetCode Tree problems | 📖 CLRS Intro to Algorithms'},
+{id:'m6',label:'Algorithms — Sorting, Searching, Recursion',sub:'Merge/Quick/Bubble/Insertion, Binary Search | 🎥 Abdul Bari Sorting | 📝 HackerRank Algorithms | 📖 CLRS'},
+{id:'m7',label:'Algorithms — Divide & Conquer, Greedy, DP',sub:'Knapsack, LCS, LIS, Matrix chain, Dijkstra, MST | 🎥 Striver DP Series | 📝 LeetCode DP problems | 📖 Algorithm Design by Kleinberg & Tardos'},
+{id:'m8',label:'Algorithms — Graph Algorithms',sub:'BFS/DFS, Topological sort, Shortest path, MST, Floyd | 🎥 Striver Graph Series | 📝 LeetCode Graph | 📖 CLRS Graph chapters'},
+],
+'MnC Core & GATE CS/DA (IISc Roadmap)': [
+{id:'m9',label:'Linear Algebra — Vector spaces, Matrices, Eigenvalues',sub:'GATE DA + UPSC overlap — IISc UMA 101/102 | 🎥 MIT OCW 18.06 Gilbert Strang | 📝 GATE DA PYQs | 📖 Linear Algebra by Gilbert Strang'},
+{id:'m10',label:'Calculus & Real Analysis — Sequences, Series, Continuity',sub:'Riemann integration, Metric spaces — IISc UM 204 | 🎥 Francis Su (Harvey Mudd) | 📝 Previous year GATE | 📖 Principles of Math Analysis by Rudin'},
+{id:'m11',label:'Probability & Statistics — Distributions, Markov Chains',sub:'LLN, CLT, Hypothesis testing — IISc UMA 201 | 🎥 StatQuest Josh Starmer | 📝 GATE DA PYQs | 📖 A First Course in Probability by Sheldon Ross'},
+{id:'m12',label:'Discrete Math — Combinatorics, Graph Theory, Logic',sub:'Eulerian tours, Trees, Matchings — IISc UMC 103A | 🎥 TrevTutor Discrete Math | 📝 GATE CS PYQs | 📖 Discrete Math by Kenneth Rosen'},
+{id:'m13',label:'ODEs & PDEs — Structural models, Numerical solutions',sub:'RK4, Finite Difference — IISc UMC 202 + MA 253 | 🎥 Dr. Gajendra Purohit | 📝 MIT OCW problem sets | 📖 Differential Equations by Hirsch & Smale'},
+{id:'m14',label:'Numerical Methods — Root finding, Integration, ODE solvers',sub:'Newton-Cotes, Gauss quadrature — IISc UMC 202 | 🎥 Neso Academy NM | 📝 MATLAB practice | 📖 Numerical Analysis by Burden & Faires'},
+{id:'m15',label:'OS & Computer Architecture',sub:'Process mgmt, Memory, File systems, Concurrency | 🎥 Gate Smashers OS | 📝 GATE CS PYQs | 📖 Computer Systems: A Programmer\'s Perspective'},
+{id:'m16',label:'Theory of Computation — Automata, Turing Machines',sub:'DFA/NFA, PDA, Undecidability — IISc UMC 205 | 🎥 Neso Academy TOC | 📝 GATE CS PYQs | 📖 Automata & Computability by Kozen'},
+{id:'m17',label:'Database Systems — SQL, NoSQL, Relational algebra',sub:'Normal forms, indexing, transactions | 🎥 Gate Smashers DBMS | 📝 LeetCode SQL | 📖 Database Systems by Korth'},
+{id:'m18',label:'AI & ML — Regression, Neural Networks, Deep Learning',sub:'SVM, CNNs, RL — IISc UMC 203 | 🎥 StatQuest + Stanford CS229 | 📝 Kaggle competitions | 📖 Pattern Recognition by Bishop'},
+],
+'UPSC Maths Optional (The 20% Extra)': [
+{id:'m19',label:'Statics — Virtual Work, Equilibrium, Catenary',sub:'Forces in 3D, stable/unstable equilibrium, friction | 🎥 Dr. Gajendra Purohit | 📝 Disha PYQs | 📖 Engineering Mechanics by Beer & Johnston'},
+{id:'m20',label:'Dynamics — Rectilinear, SHM, Central Orbits',sub:'Kepler, Binet, D\'Alembert\'s principle | 🎥 Dr. Gajendra Purohit | 📝 Disha PYQs | 📖 Dynamics by S.L. Loney'},
+{id:'m21',label:'Rigid Dynamics — Moment of Inertia, Principal Axes',sub:'Parallel/perpendicular axis, products of inertia | 🎥 Dr. Gajendra Purohit | 📝 Disha PYQs | 📖 Advanced Dynamics by Greenwood'},
+{id:'m22',label:'Fluid Dynamics — Continuity, Euler, Bernoulli',sub:'Streamlines, potential flow, vortex motion | 🎥 Dr. Gajendra Purohit | 📝 Disha PYQs | 📖 Fluid Dynamics by Chorlton'},
+{id:'m23',label:'Modern Algebra — Group & Ring Theory Proofs',sub:'Homomorphisms, ideals, quotient structures | 🎥 Socratica Abstract Algebra | 📝 Disha PYQs | 📖 A First Course in Abstract Algebra by Fraleigh'},
+{id:'m24',label:'Analytical Geometry — 3D Coords, Lines, Sphere, Cone',sub:'Shortest distance, Gauss/Green/Stokes theorems | 🎥 Dr. Gajendra Purohit | 📝 Disha PYQs | 📖 Analytical Geometry by R.J.T. Bell'},
+],
+'Practice & PYQs': [
+{id:'m25',label:'Disha UPSC CSAT PYQs (Topic-wise)',sub:'Full solved papers | 🎥 Previous year analysis videos | 📝 Topic-wise PYQ practice'},
+{id:'m26',label:'Disha UPSC Maths Optional PYQs',sub:'Paper 1 & 2 year-wise | 🎥 Previous year analysis videos | 📝 Topic-wise PYQ practice'},
+{id:'m27',label:'GATE CS Solved Papers (Last 10 Years)',sub:'Section-wise practice | 🎥 Previous year analysis videos | 📝 Topic-wise PYQ practice'},
+{id:'m28',label:'GATE DA Solved Papers',sub:'Data Science & AI specific | 🎥 Previous year analysis videos | 📝 Topic-wise PYQ practice'},
+]
+};
+
+// ====== UPSC GS FULL SYLLABUS DATA ======
+const upscGSData = {
+'Prelims GS Paper I': [
+{id:'u1',label:'Current Events',sub:'National & International Importance | 🎥 Daily News Analysis (Drishti/StudyIQ) | 📝 Prepp.in current affairs quiz | 📖 Vision IAS PT 365'},
+{id:'u2',label:'History of India & Indian National Movement',sub:'Ancient, Medieval, Modern, Freedom Struggle | 🎥 Pratik Nayak OnlyIAS | 📝 Prepp.in History PYQs | 📖 Spectrum + Old NCERT'},
+{id:'u3',label:'Indian & World Geography',sub:'Physical, Social, Economic Geography | 🎥 Amit Sengupta Geography | 📝 Drishti IAS Geo MCQs | 📖 NCERT + GC Leong'},
+{id:'u4',label:'Indian Polity & Governance',sub:'Constitution, Political System, Panchayati Raj | 🎥 M. Laxmikanth (StudyIQ) | 📝 ForumIAS Polity MCQs | 📖 Laxmikanth Indian Polity'},
+{id:'u5',label:'Economic & Social Development',sub:'Poverty, Inclusion, Demographics, Sustainable Dev | 🎥 Mrunal Patel Economy | 📝 Mrunal.org MCQs | 📖 Vivek Singh Economy'},
+{id:'u6',label:'Environment, Ecology, Biodiversity & Climate Change',sub:'General issues — no subject specialization | 🎥 PMF IAS Environment | 📝 PMF IAS MCQs | 📖 PMF IAS Environment book'},
+{id:'u7',label:'General Science',sub:'Physics, Chemistry, Biology basics | 🎥 Science & Tech by StudyIQ | 📝 NCERT Science MCQs | 📖 NCERT Class 6-10 Science'},
+],
+'Prelims CSAT (Paper II — Qualifying)': [
+{id:'u8',label:'Comprehension',sub:'Passage-based questions | 🎥 CSAT by Dinesh Sir/Santosh Sir | 📝 UPSC CSAT PYQs book | 📖 CSAT by Disha/Arun Sharma'},
+{id:'u9',label:'Interpersonal & Communication Skills',sub:'Behavioral, situational judgment | 🎥 CSAT by Dinesh Sir/Santosh Sir | 📝 UPSC CSAT PYQs book | 📖 CSAT by Disha/Arun Sharma'},
+{id:'u10',label:'Logical Reasoning & Analytical Ability',sub:'Puzzles, syllogisms, critical reasoning | 🎥 CSAT by Dinesh Sir/Santosh Sir | 📝 UPSC CSAT PYQs book | 📖 CSAT by Disha/Arun Sharma'},
+{id:'u11',label:'Decision Making & Problem Solving',sub:'Ethical dilemmas, administrative scenarios | 🎥 CSAT by Dinesh Sir/Santosh Sir | 📝 UPSC CSAT PYQs book | 📖 CSAT by Disha/Arun Sharma'},
+{id:'u12',label:'General Mental Ability',sub:'Basic arithmetic, series, analogies | 🎥 CSAT by Dinesh Sir/Santosh Sir | 📝 UPSC CSAT PYQs book | 📖 CSAT by Disha/Arun Sharma'},
+{id:'u13',label:'Basic Numeracy (Class X level)',sub:'Numbers, relations, order of magnitude | 🎥 CSAT by Dinesh Sir/Santosh Sir | 📝 UPSC CSAT PYQs book | 📖 CSAT by Disha/Arun Sharma'},
+{id:'u14',label:'Data Interpretation',sub:'Charts, graphs, tables, data sufficiency | 🎥 CSAT by Dinesh Sir/Santosh Sir | 📝 UPSC CSAT PYQs book | 📖 CSAT by Disha/Arun Sharma'},
+],
+'Mains Essay (Paper I)': [
+{id:'u15',label:'Essay Writing — 2 Essays',sub:'1000-1200 words each, diverse topics | 🎥 Essay writing by Anudeep Durishetty | 📝 10+ topper essays review | 📖 Essay strategy by S. Ansari'},
+],
+'Mains GS Paper I — Heritage, History, Geography & Society': [
+{id:'u16',label:'Indian Culture — Art Forms, Literature, Architecture',sub:'Ancient to modern | 🎥 Pratik Nayak Art & Culture | 📝 Mains PYQs | 📖 Nitin Singhania Art & Culture'},
+{id:'u17',label:'Modern Indian History (mid-18th century to present)',sub:'Significant events, personalities, issues | 🎥 Spectrum by StudyIQ | 📝 Mains PYQs | 📖 Spectrum by Rajiv Ahir'},
+{id:'u18',label:'Freedom Struggle — Stages & Contributions',sub:'From different parts of the country | 🎥 Pratik Nayak Freedom Struggle | 📝 Mains PYQs | 📖 India\'s Struggle for Independence by Bipan Chandra'},
+{id:'u19',label:'Post-Independence Consolidation & Reorganization',sub:'Integration of states, linguistic reorganization | 🎥 Nitin Sangwan | 📝 Mains PYQs | 📖 NCERT Politics Since Independence'},
+{id:'u20',label:'World History — Industrial Rev, WWs, Colonization, Political Philosophies',sub:'Capitalism, Socialism, Communism, Decolonization | 🎥 Pratik Nayak World History | 📝 Mains PYQs | 📖 World History by Norman Lowe'},
+{id:'u21',label:'Indian Society — Diversity, Women, Poverty, Urbanization',sub:'Population issues, globalization effects | 🎥 Sleepy Classes Sociology | 📝 Mains PYQs | 📖 NCERT Class 12 Sociology'},
+{id:'u22',label:'Social Empowerment — Communalism, Regionalism, Secularism',sub:'SC/ST/OBC, minorities, women | 🎥 OnlyIAS Social Justice | 📝 Mains PYQs | 📖 VisionIAS Social Justice notes'},
+{id:'u23',label:'World Physical Geography',sub:'Landforms, climate, biomes, oceanography | 🎥 Amit Sengupta Geography | 📝 Mains PYQs | 📖 GC Leong Physical Geography'},
+{id:'u24',label:'Distribution of Key Natural Resources',sub:'Location of industries worldwide | 🎥 Geography by Parcham | 📝 Mains PYQs | 📖 Oxford School Atlas'},
+{id:'u25',label:'Geophysical Phenomena — Earthquakes, Tsunamis, Cyclones',sub:'Changes in critical geographical features | 🎥 Geography by Parcham | 📝 Mains PYQs | 📖 NCERT Class 11 Physical Geo'},
+],
+'Mains GS Paper II — Governance, Polity, Social Justice & IR': [
+{id:'u26',label:'Indian Constitution — Underpinnings, Evolution, Features',sub:'Amendments, Basic Structure, Provisions | 🎥 M. Laxmikanth Polity | 📝 Mains PYQs | 📖 Indian Polity by Laxmikanth'},
+{id:'u27',label:'Federal Structure — Union-State Relations, Devolution',sub:'Powers, finances, local governance | 🎥 StudyIQ Polity | 📝 Mains PYQs | 📖 Laxmikanth + DD Basu'},
+{id:'u28',label:'Separation of Powers — Dispute Redressal Mechanisms',sub:' | 🎥 OnlyIAS Polity | 📝 Mains PYQs | 📖 Laxmikanth'},
+{id:'u29',label:'Comparison with Other Countries',sub:'UK, USA, Canada, Australia | 🎥 StudyIQ Comparative Polity | 📝 Mains PYQs | 📖 Constitution of India by DD Basu'},
+{id:'u30',label:'Parliament & State Legislatures',sub:'Structure, functioning, powers, privileges | 🎥 OnlyIAS Parliament | 📝 Mains PYQs | 📖 Laxmikanth Parliament chapters'},
+{id:'u31',label:'Executive & Judiciary — Structure, Functioning',sub:'Ministries, pressure groups | 🎥 StudyIQ Judiciary | 📝 Mains PYQs | 📖 Laxmikanth'},
+{id:'u32',label:'Representation of People\'s Act',sub:'Salient features, electoral reforms | 🎥 OnlyIAS Election | 📝 Mains PYQs | 📖 Laxmikanth RPA chapter'},
+{id:'u33',label:'Constitutional Posts & Bodies',sub:'CAG, EC, UPSC, Finance Commission | 🎥 StudyIQ Constitutional Bodies | 📝 Mains PYQs | 📖 Laxmikanth'},
+{id:'u34',label:'Statutory, Regulatory & Quasi-Judicial Bodies',sub:'NITI, NHRC, CIC, CVC, TRAI | 🎥 OnlyIAS Statutory Bodies | 📝 Mains PYQs | 📖 Laxmikanth'},
+{id:'u35',label:'Government Policies & Interventions',sub:'Design, implementation, issues | 🎥 VisionIAS Governance | 📝 Mains PYQs | 📖 VisionIAS Governance notes'},
+{id:'u36',label:'Development Processes — NGOs, SHGs, Donors',sub:'Various groups & stakeholders | 🎥 Drishti IAS Development | 📝 Mains PYQs | 📖 Governance notes by VisionIAS'},
+{id:'u37',label:'Welfare Schemes for Vulnerable Sections',sub:'Centre & State, mechanisms, institutions | 🎥 Drishti IAS Schemes | 📝 Mains PYQs | 📖 Govt schemes monthly updates'},
+{id:'u38',label:'Social Sector — Health, Education, HR',sub:'Development & management | 🎥 OnlyIAS Social Justice | 📝 Mains PYQs | 📖 VisionIAS Social Justice'},
+{id:'u39',label:'Poverty & Hunger Issues',sub:'Causes, policies, programs | 🎥 Mrunal Economy | 📝 Mains PYQs | 📖 India Year Book'},
+{id:'u40',label:'Governance, Transparency — E-Governance, Citizen Charters',sub:'Models, successes, limitations | 🎥 Drishti IAS Governance | 📝 Mains PYQs | 📖 E-Governance by VisionIAS'},
+{id:'u41',label:'Role of Civil Services in Democracy',sub:' | 🎥 Drishti IAS Ethics | 📝 Mains PYQs | 📖 ARC Reports summary'},
+{id:'u42',label:'India & Neighborhood — Bilateral/Regional/Global Groupings',sub:'SAARC, BRICS, UN, G20, diaspora | 🎥 Pawneet Singh IR | 📝 Mains PYQs | 📖 VisionIAS IR notes'},
+{id:'u43',label:'International Institutions — IMF, WB, WTO',sub:'Effects on India\'s interests | 🎥 StudyIQ IR | 📝 Mains PYQs | 📖 International Relations by Pushpesh Pant'},
+],
+'Mains GS Paper III — Economy, S&T, Environment, Security & DM': [
+{id:'u44',label:'Indian Economy — Planning, Growth, Employment',sub:'Resource mobilization, inclusive growth | 🎥 Mrunal Patel Economy | 📝 Mains PYQs | 📖 Indian Economy by Ramesh Singh'},
+{id:'u45',label:'Government Budgeting',sub:'Fiscal policy, deficit, FRBM | 🎥 Mrunal Budget analysis | 📝 Mains PYQs | 📖 Economic Survey summary'},
+{id:'u46',label:'Agriculture — Cropping, Irrigation, Storage, Marketing',sub:'MSP, PDS, food security, e-technology | 🎥 Drishti IAS Agriculture | 📝 Mains PYQs | 📖 Agriculture by S.S. Phulkia'},
+{id:'u47',label:'Food Processing — Scope & Supply Chain',sub:'Location, upstream/downstream | 🎥 StudyIQ Food Processing | 📝 Mains PYQs | 📖 VisionIAS notes'},
+{id:'u48',label:'Land Reforms in India',sub:'Implementation, impact | 🎥 OnlyIAS Land Reforms | 📝 Mains PYQs | 📖 NCERT Class 12 Economics'},
+{id:'u49',label:'Liberalization — Effects on Economy & Industry',sub:'Industrial policy changes | 🎥 Mrunal Reform Era | 📝 Mains PYQs | 📖 Indian Economy since Independence'},
+{id:'u50',label:'Infrastructure — Energy, Ports, Roads, Railways',sub:'Investment models | 🎥 Drishti IAS Infrastructure | 📝 Mains PYQs | 📖 India Year Book'},
+{id:'u51',label:'Science & Technology — Developments & Applications',sub:'Everyday life, indigenization | 🎥 Science & Tech by StudyIQ | 📝 Mains PYQs | 📖 PT 365 Science & Tech'},
+{id:'u52',label:'Indian Achievements in S&T — IT, Space, Computers',sub:'IPR, nano, biotech, robotics | 🎥 Science & Tech by StudyIQ | 📝 Mains PYQs | 📖 India Year Book S&T'},
+{id:'u53',label:'Conservation, Pollution, EIA, Climate Change',sub:'Biodiversity conservation | 🎥 PMF IAS Environment | 📝 Mains PYQs | 📖 PMF IAS Environment'},
+{id:'u54',label:'Disaster & Disaster Management',sub:'Preparedness, mitigation, NDMA | 🎥 Drishti IAS Disaster Mgmt | 📝 Mains PYQs | 📖 Disaster Management by VisionIAS'},
+{id:'u55',label:'Extremism — Development Linkages',sub:'Naxalism, LWE | 🎥 OnlyIAS Security | 📝 Mains PYQs | 📖 Internal Security by Ashok Kumar'},
+{id:'u56',label:'Internal Security — External & Non-State Actors',sub:'Communication, media challenges | 🎥 Ashok Kumar IPS lectures | 📝 Mains PYQs | 📖 Internal Security by Ashok Kumar'},
+{id:'u57',label:'Cyber Security & Money Laundering',sub:'Digital security, prevention | 🎥 OnlyIAS Cyber Security | 📝 Mains PYQs | 📖 Internal Security by Ashok Kumar'},
+{id:'u58',label:'Border Security — Crime & Terrorism',sub:'Security forces, agencies | 🎥 Drishti IAS Border Security | 📝 Mains PYQs | 📖 Internal Security by Ashok Kumar'},
+],
+'Mains GS Paper IV — Ethics, Integrity & Aptitude': [
+{id:'u59',label:'Ethics & Human Interface',sub:'Essence, determinants, consequences | 🎥 Lexicon Ethics YouTube | 📝 Mains case studies PYQs | 📖 Lexicon for Ethics'},
+{id:'u60',label:'Human Values — Lessons from Leaders & Reformers',sub:'Family, society, institutions role | 🎥 Drishti Ethics lectures | 📝 Mains case studies PYQs | 📖 Ethics by G. Subba Rao'},
+{id:'u61',label:'Attitude — Content, Structure, Function',sub:'Moral/political attitudes, persuasion | 🎥 OnlyIAS Ethics | 📝 Mains PYQs | 📖 Attitude chapters in Lexicon'},
+{id:'u62',label:'Aptitude & Foundational Values',sub:'Integrity, impartiality, objectivity, empathy | 🎥 Mudit Jain Ethics | 📝 Mains PYQs | 📖 Decode Ethics by Mudit Jain'},
+{id:'u63',label:'Emotional Intelligence in Administration',sub:'Concepts, utility | 🎥 Drishti EI concepts | 📝 Mains PYQs | 📖 EI chapters in Lexicon'},
+{id:'u64',label:'Moral Thinkers & Philosophers',sub:'India & World — Aristotle, Kant, Gandhi | 🎥 Sleepy Classes Ethics | 📝 Mains PYQs | 📖 Ethics books by various authors'},
+{id:'u65',label:'Ethical Concerns — Govt & Private Institutions',sub:'Accountability, corporate governance | 🎥 OnlyIAS Ethics Governance | 📝 Mains PYQs | 📖 Lexicon + ARC reports'},
+{id:'u66',label:'Probity in Governance — RTI, Codes, Charters',sub:'Work culture, corruption | 🎥 Drishti IAS Probity | 📝 Mains PYQs | 📖 2nd ARC Report on Ethics'},
+{id:'u67',label:'Case Studies — Ethical Dilemmas',sub:'Applied administrative scenarios | 🎥 Mudit Jain case studies | 📝 50+ case studies practice | 📖 Decode Ethics case studies'},
+],
+'Qualifying Papers (Language & English)': [
+{id:'u68',label:'Indian Language (Paper A)',sub:'Translation, precis, comprehension, grammar'},
+{id:'u69',label:'English (Paper B)',sub:'Comprehension, precis, Class X level'},
+]
+};
+
+// ====== UPSC MATHS OPTIONAL DATA (FULL SYLLABUS) ======
+const mathsOptData = {
+'Paper 1 — Section A: Linear Algebra': [
+{id:'mop1',label:'Vector spaces over R and C',sub:'Dependence, independence, subspaces, basis, dimension | 🎥 MIT OCW 18.06 (Gilbert Strang) | 📝 UPSC Maths PYQs | 📖 Linear Algebra by Hoffman & Kunze'},
+{id:'mop2',label:'Linear transformations, rank, nullity, matrix representation',sub:' | 🎥 MIT 18.06 + 3Blue1Brown | 📝 UPSC Maths PYQs | 📖 Matrix Analysis by Horn & Johnson'},
+{id:'mop3',label:'Algebra of Matrices — Echelon form, congruence, similarity, rank, inverse',sub:'System of linear equations | 🎥 MIT OCW Eigenvalues | 📝 UPSC Maths PYQs | 📖 Linear Algebra by Friedberg/Insel/Spence'},
+{id:'mop4',label:'Eigenvalues, eigenvectors, characteristic polynomial, Cayley-Hamilton',sub:'Symmetric, Hermitian, Orthogonal, Unitary matrices | 🎥 MIT OCW 18.06 (Gilbert Strang) | 📝 UPSC Maths PYQs | 📖 Linear Algebra by Hoffman & Kunze'},
+],
+'Paper 1 — Section A: Calculus': [
+{id:'mop5',label:'Real numbers, functions, limits, continuity, differentiability',sub:'Mean Value Theorem, Taylor\'s theorem, indeterminate forms | 🎥 Professor Leonard Calculus | 📝 UPSC Maths PYQs | 📖 Calculus by T.M. Apostol'},
+{id:'mop6',label:'Maxima, Minima, Asymptotes, Curve Tracing',sub:'Single variable | 🎥 3Blue1Brown + Michael Penn | 📝 UPSC Maths PYQs | 📖 Calculus by T.M. Apostol'},
+{id:'mop7',label:'Multivariable Calculus — partial derivatives, Lagrange multipliers, Jacobian',sub:'Functions of 2/3 variables | 🎥 MIT OCW Multivariable Calculus | 📝 UPSC Maths PYQs | 📖 Calculus Vol II by Apostol'},
+{id:'mop8',label:'Integration — Riemann, Improper, Double, Triple',sub:'Areas, surfaces, volumes | 🎥 Professor Leonard Integration | 📝 UPSC Maths PYQs | 📖 Calculus by Apostol/Spivak'},
+],
+'Paper 1 — Section A: Analytic Geometry': [
+{id:'mop9',label:'3D coordinates, second degree equations, canonical forms',sub:'Straight lines, shortest distance between skew lines | 🎥 Dr. Gajendra Purohit | 📝 UPSC Maths PYQs | 📖 Analytical Geometry by R.J.T. Bell'},
+{id:'mop10',label:'Quadric surfaces — Plane, Sphere, Cone, Cylinder, Paraboloid, Ellipsoid, Hyperboloid',sub:'Properties | 🎥 Dr. Gajendra Purohit | 📝 UPSC Maths PYQs | 📖 Co-ordinate Geometry by S.L. Loney'},
+],
+'Paper 1 — Section B: Ordinary Differential Equations': [
+{id:'mop11',label:'First order DEs — integrating factor, orthogonal trajectories',sub:'Clairaut\'s equation, singular solution | 🎥 Dr. Gajendra Purohit ODE | 📝 UPSC Maths PYQs | 📖 ODE by Coddington & Levinson'},
+{id:'mop12',label:'Higher order linear DEs — constant/variable coefficients',sub:'Euler-Cauchy, variation of parameters | 🎥 Neso Academy ODE | 📝 UPSC Maths PYQs | 📖 Advanced Engineering Math by Kreyszig'},
+{id:'mop13',label:'Laplace & Inverse Laplace transforms — properties, IVPs',sub:'2nd order linear with constant coefficients | 🎥 Dr. Gajendra Purohit Laplace | 📝 UPSC Maths PYQs | 📖 ODE by E.A. Coddington'},
+],
+'Paper 1 — Section B: Dynamics & Statics': [
+{id:'mop14',label:'Rectilinear motion, SHM, projectiles, constrained motion',sub:'Work, energy, conservation | 🎥 Dr. Gajendra Purohit Dynamics | 📝 UPSC Maths PYQs | 📖 Dynamics by S.L. Loney'},
+{id:'mop15',label:'Central forces, Kepler\'s laws, orbital motion',sub:'Equilibrium, friction, catenary | 🎥 Dr. Gajendra Purohit | 📝 UPSC Maths PYQs | 📖 Dynamics by S.L. Loney'},
+{id:'mop16',label:'Virtual Work, Stability, 3D forces',sub:'Principle of virtual work | 🎥 Dr. Gajendra Purohit | 📝 UPSC Maths PYQs | 📖 Statics by R.S. Verma'},
+],
+'Paper 1 — Section B: Vector Analysis': [
+{id:'mop17',label:'Gradient, Divergence, Curl — Cartesian & cylindrical',sub:'Vector identities and equations | 🎥 MIT OCW Multivariable | 📝 UPSC Maths PYQs | 📖 Vector Analysis by M.R. Spiegel'},
+{id:'mop18',label:'Gauss, Green, Stokes theorems — line, surface, volume integrals',sub:'Applications | 🎥 Professor Leonard Vectors | 📝 UPSC Maths PYQs | 📖 Div/Grad/Curl by Schey'},
+],
+'Paper 2 — Section A: Real Analysis': [
+{id:'mop19',label:'Sets, metric spaces — compactness, connectedness',sub:'Countable/uncountable | 🎥 Francis Su (Harvey Mudd) | 📝 UPSC Maths PYQs | 📖 Principles of Math Analysis by Rudin'},
+{id:'mop20',label:'Sequences & Series — uniform convergence, power series',sub:'Absolute/conditional convergence | 🎥 Michael Penn Analysis | 📝 UPSC Maths PYQs | 📖 Real Analysis by T.M. Apostol'},
+{id:'mop21',label:'Continuity, differentiability, uniform continuity, MVT, Taylor',sub:'Several variables | 🎥 Mitchell (YouTube Analysis) | 📝 UPSC Maths PYQs | 📖 Real Analysis by Royden'},
+{id:'mop22',label:'Riemann & Riemann-Stieltjes integration, improper integrals',sub:'Beta & Gamma functions | 🎥 Neso Academy Integration | 📝 UPSC Maths PYQs | 📖 Real Analysis by G. de Barra'},
+{id:'mop23',label:'Fourier Series — convergence, Parseval\'s identity, Fourier integrals',sub:'Half-range expansions | 🎥 Dr. Gajendra Purohit Fourier | 📝 UPSC Maths PYQs | 📖 Fourier Series by Tolstov'},
+],
+'Paper 2 — Section A: Complex Analysis': [
+{id:'mop24',label:'Analytic functions, Cauchy-Riemann, harmonic functions',sub:'Conformal mappings | 🎥 Neso Academy Complex | 📝 UPSC Maths PYQs | 📖 Complex Analysis by Ahlfors'},
+{id:'mop25',label:'Contour integration — Cauchy\'s theorem & integral formula',sub:'Taylor & Laurent series | 🎥 Neso Academy Contour | 📝 UPSC Maths PYQs | 📖 Complex Variables by Churchill'},
+{id:'mop26',label:'Residue theorem — evaluation of real integrals',sub:'Poles and zeros | 🎥 Dr. Gajendra Purohit | 📝 UPSC Maths PYQs | 📖 Complex Analysis by S. Ponnusamy'},
+],
+'Paper 2 — Section A: Abstract Algebra': [
+{id:'mop27',label:'Groups — subgroups, normal, quotient, homomorphisms',sub:'Cyclic, permutation groups, Cayley\'s theorem | 🎥 Socratica Abstract Algebra | 📝 UPSC Maths PYQs | 📖 Abstract Algebra by Dummit & Foote'},
+{id:'mop28',label:'Rings — ideals, quotient rings, homomorphisms',sub:'Integral domains, fields, polynomial rings | 🎥 Socratica Ring Theory | 📝 UPSC Maths PYQs | 📖 Abstract Algebra by Gallian'},
+],
+'Paper 2 — Section B: Partial Differential Equations': [
+{id:'mop29',label:'First order PDEs — Lagrange\'s & Charpit\'s method',sub:'Classification of 2nd order PDEs | 🎥 Dr. Gajendra Purohit PDE | 📝 UPSC Maths PYQs | 📖 PDE by Prasad & Ravindran'},
+{id:'mop30',label:'Wave, Heat, Laplace equations — separation of variables',sub:'D\'Alembert\'s solution, Fourier series | 🎥 MIT OCW PDE | 📝 UPSC Maths PYQs | 📖 PDE by Sneddon'},
+],
+'Paper 2 — Section B: Programming & Numerical Analysis': [
+{id:'mop31',label:'C Programming — algorithms, flowcharts, types, functions, pointers',sub:'Structures, file handling | 🎥 Apna College C/C++ | 📝 GeeksforGeeks C | 📖 C Programming by Kernighan & Ritchie'},
+{id:'mop32',label:'Numerical root finding, Interpolation — Newton, Lagrange, Spline',sub:'Newton-Raphson, Regula Falsi | 🎥 Numerical Analysis NPTEL | 📝 UPSC Maths PYQs | 📖 Numerical Analysis by Burden & Faires'},
+{id:'mop33',label:'Numerical Integration & ODE — Trapezoidal, Simpson, RK4',sub:'Gaussian quadrature, Euler | 🎥 Numerical Methods NPTEL | 📝 UPSC Maths PYQs | 📖 Numerical Methods by Chapra'},
+],
+'Paper 2 — Section B: Mechanics & Fluid Dynamics': [
+{id:'mop34',label:'Rigid body mechanics — moment of inertia, principal axes',sub:'Euler\'s equations, motion of a top | 🎥 Dr. Gajendra Purohit | 📝 UPSC Maths PYQs | 📖 Mechanics by R.C. Hibbeler'},
+{id:'mop35',label:'Fluid Dynamics — continuity, Euler, Bernoulli, Navier-Stokes',sub:'Streamlines, vorticity, boundary layer | 🎥 NPTEL Fluid Dynamics | 📝 UPSC Maths PYQs | 📖 Fluid Dynamics by A.J. Chorlton'},
+],
+'Practice & PYQs': [
+{id:'mop36',label:'Disha Maths Optional PYQs — Paper 1',sub:'Year-wise solved | 🎥 UPSC Maths PYQ analysis | 📝 Year-wise solved papers | 📖 Disha UPSC Maths PYQs'},
+{id:'mop37',label:'Disha Maths Optional PYQs — Paper 2',sub:'Year-wise solved | 🎥 UPSC Maths PYQ analysis | 📝 Year-wise solved papers | 📖 Disha UPSC Maths PYQs'},
+]
+};
+
+// ====== IISc ELECTIVES DATA (Full Soft Core + Open Electives) ======
+const electivesData = {
+'Maths Dept (MA) — Soft Core Options': [
+{id:'el1',label:'MA 200: Multivariable Calculus (3:1)',sub:'Inverse/implicit fn theorem, diff forms, Stokes'},
+{id:'el2',label:'MA 211: Matrix Theory (3:0)',sub:'Jordan form, polar decomposition, bilinear forms'},
+{id:'el3',label:'MA 212: Algebra I (3:0)',sub:'Group theory, Ring theory, Module theory'},
+{id:'el4',label:'MA 213: Algebra II (3:1)',sub:'Field theory, Galois theory, insolvability of quintic'},
+{id:'el5',label:'MA 215: Intro to Modular Forms (3:0)',sub:'Eisenstein series, Hecke operators, L-functions'},
+{id:'el6',label:'MA 216: Graph Theory (3:0)',sub:'Colouring, matchings, Tutte poly, probabilistic method'},
+{id:'el7',label:'MA 217: Discrete Mathematics (3:0)',sub:'Combinatorics, Ramsey, Polya enumeration'},
+{id:'el8',label:'MA 218: Number Theory (3:0)',sub:'Quadratic reciprocity, Dirichlet chars, algebraic NT'},
+{id:'el9',label:'MA 219: Linear Algebra (3:1)',sub:'Jordan canonical form, Sylvester law, spectral theorem'},
+{id:'el10',label:'MA 220: Representation Theory of Finite Groups (3:0)',sub:'Irreps, characters, induced reps, SU(2)'},
+{id:'el11',label:'MA 221: Analysis I — Real Analysis (3:0)',sub:'Metric spaces, Riemann-Stieltjes, uniform convergence'},
+{id:'el12',label:'MA 222: Analysis II — Measure & Integration (3:1)',sub:'Lebesgue measure, Lp spaces, Radon-Nikodym'},
+{id:'el13',label:'MA 223: Functional Analysis (3:0)',sub:'Banach/Hilbert spaces, Hahn-Banach, spectral theorem'},
+{id:'el14',label:'MA 224: Complex Analysis (3:1)',sub:'Cauchy integral formula, residue theorem, conformal maps'},
+{id:'el15',label:'MA 229: Calculus on Manifolds (3:0)',sub:'Sard\'s theorem, manifolds, Stokes theorem'},
+{id:'el16',label:'MA 231: Topology (3:1)',sub:'Compactness, separation axioms, Urysohn, Baire category'},
+{id:'el17',label:'MA 232: Intro to Algebraic Topology (3:0)',sub:'Fundamental group, covering spaces, simplicial homology'},
+{id:'el18',label:'MA 233: Differential Geometry (3:0)',sub:'Curves, surfaces, Frenet, geodesics, Weingarten map'},
+{id:'el19',label:'MA 235: Intro to Differentiable Manifolds (3:0)',sub:'Tangent bundles, vector fields, de Rham cohomology'},
+{id:'el20',label:'MA 241: Ordinary Differential Equations (3:1)',sub:'Existence/uniqueness, phase-plane, Lyapunov stability'},
+{id:'el21',label:'MA 242: Partial Differential Equations (3:0)',sub:'Cauchy problem, Laplace, diffusion, wave equations'},
+{id:'el22',label:'MA 246: Mathematical Methods (3:0)',sub:'LA, ODE, complex variables — applied'},
+{id:'el23',label:'MA 251: Numerical Methods (3:0)',sub:'Newton-Raphson, Gaussian quadrature, RK4, shooting'},
+{id:'el24',label:'MA 253: Num Methods for PDEs (3:0)',sub:'Finite difference, finite element, Lax equivalence'},
+{id:'el25',label:'MA 254: Numerical Analysis (3:0)',sub:'Advanced numerical linear algebra and ODE solvers'},
+{id:'el26',label:'MA 207: Proofs Lab with Lean (0:1)',sub:'Formal proofs using Lean theorem prover'},
+{id:'el27',label:'MA 208: Proofs and Programs (3:1)',sub:'Lean, SAT solvers, ML in theorem proving'},
+{id:'el28',label:'MA 209: Logic — Classical, Modal, Intuitionistic (3:0)',sub:'Tableaus, Kripke frames, completeness'},
+{id:'el29',label:'MA 210: Logic, Types and Spaces (3:0)',sub:'Type theory, Godel, Homotopy Type Theory'},
+{id:'el30',label:'MA 222A: Topics in Measure Theory (3:0)',sub:'Fourier transform, BV functions, Hausdorff measures'},
+{id:'el31',label:'MA 226: Complex Analysis II (3:0)',sub:'Subharmonic functions, Riemann mapping, Picard'},
+{id:'el32',label:'MA 234: Metric Geometry of Spaces/Groups (3:0)',sub:'Geometric group theory, curvature via distances'},
+{id:'el33',label:'MA 237: Intro to Tilings (3:0)',sub:'Euclidean/hyperbolic tilings, Penrose, hat tile'},
+],
+'CSA Dept (E0) — Soft Core Options': [
+{id:'el34',label:'E0 203: Spectral Algorithms (3:1)',sub:'Graph partitioning, Cheeger, SVD, community detection'},
+{id:'el35',label:'E0 205: Math Logic & Theorem Proving (3:1)',sub:'Propositional/first-order logic, decision procedures'},
+{id:'el36',label:'E0 206: A Theorist\'s Toolkit (3:1)',sub:'Probabilistic methods, streaming, Fourier analysis, MWU'},
+{id:'el37',label:'E0 207: Computational Topology (3:1)',sub:'Persistent homology, Morse theory, TDA'},
+{id:'el38',label:'E0 208: Computational Geometry (3:1)',sub:'Convex hulls, Voronoi, Delaunay, arrangements'},
+{id:'el39',label:'E0 209: Principles of Distributed Software (3:1)',sub:'Cloud, actors, Akka, Kubernetes, CRDTs'},
+{id:'el40',label:'E0 210: Dynamic Program Analysis (3:1)',sub:'Profiling, fuzzing, symbolic execution, concolic testing'},
+{id:'el41',label:'E0 213: Quantum Safe Cryptography (3:0)',sub:'Post-quantum crypto, lattices, isogeny, multivariate'},
+{id:'el42',label:'E0 214: Applied LA & Optimization (3:0)',sub:'Matrix decompositions, gradient methods, duality'},
+{id:'el43',label:'E0 215: Algorithms under Uncertainty (3:1)',sub:'Online, streaming, bandits, dynamic algorithms'},
+{id:'el44',label:'E0 219: Linear Algebra & Applications (3:1)',sub:'SVD, canonical forms, applications'},
+{id:'el45',label:'E0 220: Graph Theory (3:1)',sub:'Vertex cover, matching, colouring, network flows'},
+{id:'el46',label:'E0 221: Discrete Structures (3:1)',sub:'Logic, orders, counting, number theory, groups, graphs'},
+{id:'el47',label:'E0 222: Automata Theory & Computability (3:1)',sub:'Myhill-Nerode, PDA, Turing machines, undecidability'},
+{id:'el48',label:'E0 223: Automated Verification (3:1)',sub:'Model checking, CTL/LTL, mu-calculus, SMT'},
+{id:'el49',label:'E0 224: Computational Complexity Theory (3:1)',sub:'Time/space hierarchy, PH, circuit complexity, IP'},
+{id:'el50',label:'E0 225: Design & Analysis of Algorithms (3:1)',sub:'Greedy, DP, max-flow, LP, NP-hardness, approx'},
+{id:'el51',label:'E0 226: Linear Algebra & Probability (3:1)',sub:'Canonical forms, probability spaces, hypothesis testing'},
+{id:'el52',label:'E0 227: Program Analysis & Verification (3:1)',sub:'Dataflow, abstract interpretation, Hoare logic, types'},
+{id:'el53',label:'E0 228: Combinatorics (3:1)',sub:'Generating functions, Ramsey, probabilistic methods'},
+{id:'el54',label:'E0 229: Foundations of Data Science (3:1)',sub:'High-dim geometry, SVD, random graphs, clustering'},
+{id:'el55',label:'E0 230: Computational Optimization (3:1)',sub:'Quasi-Newton, conjugate gradient, SQP, duality'},
+{id:'el56',label:'E0 231: Algorithmic Algebra (3:1)',sub:'Groebner bases, Buchberger, toric ideals, applications'},
+{id:'el57',label:'E0 232: Probability & Statistics (3:1)',sub:'Markov chains, LLN, large deviations, exponential models'},
+{id:'el58',label:'E0 233: Information Theory & Learning (3:1)',sub:'Source coding, max entropy, Fisher info, rate distortion'},
+{id:'el59',label:'E0 234: Randomized Algorithms (3:1)',sub:'Chernoff bounds, random walks, martingales, streaming'},
+{id:'el60',label:'E0 235: Cryptography (3:1)',sub:'PKI, digital signatures, zero knowledge, elliptic curves'},
+{id:'el61',label:'E0 236: Information Retrieval (3:1)',sub:'Boolean/vector space models, indexing, PageRank'},
+{id:'el62',label:'E0 238: Intelligent Agents (3:1)',sub:'AI, knowledge representation, planning, learning'},
+{id:'el63',label:'E0 239: Software Reliability (3:1)',sub:'Concurrency, model checking, static analysis, security'},
+{id:'el64',label:'E0 240: Modeling & Simulation (3:1)',sub:'Stochastic processes, MCMC, variance reduction'},
+{id:'el65',label:'E0 241: Computer Communication Networks (3:1)',sub:'TCP/IP, queueing theory, routing, congestion control'},
+{id:'el66',label:'E0 242: Probabilistic Models for Learning (3:1)',sub:'HMM, graphical models, EM, topic models'},
+{id:'el67',label:'E0 243: Computer Architecture (3:1)',sub:'ILP, multicore caches, memory consistency, coherence'},
+{id:'el68',label:'E0 244: Computational Geometry & Topology (3:1)',sub:'Persistence, Reeb graph, eps-nets, discrepancy'},
+{id:'el69',label:'E0 248: Theoretical Foundations of Crypto (3:1)',sub:'OWF, PRG, PRF, encryption, signatures, commitments'},
+{id:'el70',label:'E0 249: Approximation Algorithms (3:1)',sub:'LP rounding, primal-dual, SDP, hardness of approx'},
+{id:'el71',label:'E0 250: Deep Learning (3:1)',sub:'CNNs, RNNs, generative models, VAEs, GANs'},
+{id:'el72',label:'E0 308: Advanced Data Structures (3:1)',sub:'Range searching, persistence, fusion trees, LSH'},
+{id:'el73',label:'E0 324: Advanced Optimization for ML (3:0)',sub:'Convex analysis, first-order methods, online learning'},
+],
+'Other Depts — Open Electives': [
+{id:'el74',label:'MG 201: Managerial Economics (3:0)',sub:'Micro/macro economics for managers'},
+{id:'el75',label:'MG 265: Data Mining (3:0)',sub:'Classification, clustering, association rules'},
+{id:'el76',label:'MG 221: Applied Probability & Statistics (2:1)',sub:'Distributions, estimation, regression'},
+{id:'el77',label:'MG 226: Time Series Analysis & Forecasting (3:0)',sub:'ARIMA, GARCH, state-space models'},
+{id:'el78',label:'MG 258: Financial Instruments & Risk Mgmt (3:0)',sub:'Options, futures, derivatives, risk modeling'},
+{id:'el79',label:'PH 202: Statistical Mechanics (3:0)',sub:'Ensembles, partition functions, phase transitions'},
+{id:'el80',label:'PH 204: Quantum Mechanics II (3:0)',sub:'Perturbation theory, scattering, QM applications'},
+{id:'el81',label:'PH 206: Electromagnetic Theory (3:0)',sub:'Maxwell eqns, EM waves, radiation'},
+{id:'el82',label:'BC 302: Current Trends in Drug Discovery (3:0)',sub:'Biotech approaches to drug development'},
+{id:'el83',label:'EC 201: Theoretical & Mathematical Ecology (2:1)',sub:'Population dynamics, species interactions'},
+{id:'el84',label:'EC 303: Spatial Dynamics in Biology (2:1)',sub:'Pattern formation, biological waves'},
+{id:'el85',label:'NE 101: Entrepreneurship & Ethics (1:0)',sub:'Startup fundamentals, societal impact'},
+{id:'el86',label:'E1 396: Stochastic Approximation Algorithms (3:1)',sub:'Robbins-Monro, SGD, reinforcement learning theory'},
+{id:'el87',label:'MA 331: Topology & Geometry (3:0)',sub:'Advanced topology with geometric perspective'},
+{id:'el88',label:'E0 259: Data Analytics (3:1)',sub:'Statistical learning, visualization, big data tools'},
+{id:'el89',label:'BE 218: Computational Epidemiology (3:1)',sub:'Disease modeling, network epidemiology'},
+{id:'el90',label:'CP 214: Foundations of Robotics (3:1)',sub:'Kinematics, control, perception, planning'},
+{id:'el91',label:'PH 354: Computational Physics (3:0)',sub:'Monte Carlo, MD simulations, PDE solvers in physics'},
+{id:'el92',label:'E2 270: Quantum Information Theory (3:0)',sub:'Qubits, entanglement, quantum error correction'},
+{id:'el93',label:'DS 301: Bioinformatics (2:0)',sub:'Sequence analysis, phylogenetics, genomics'},
+]
+};
+
+
+function renderExamSpecific() {
+  const container = document.getElementById('examSpecificContent');
+  if (!container) return;
+  let html = '<h3 style="margin:18px 0 8px;font-size:1.1rem;color:var(--accent2);border-left:3px solid var(--accent2);padding-left:12px">📋 Exam-Specific Topics (Unique to Each Exam)</h3>';
+  Object.keys(examSpecificData).forEach(group => {
+    let items = examSpecificData[group];
+    let done = items.filter(i => localStorage.getItem('chk_'+i.id)==='1').length;
+    let total = items.length;
+    let pct = total ? Math.round(done/total*100) : 0;
+    html += `<div class="topic-group">
+<div class="group-title"><span>${group}</span><span class="prog">${done}/${total} (${pct}%)</span></div>
+<div class="mini-bar"><div class="fill" style="width:${pct}%"></div></div>`;
+    items.forEach(i => {
+      let checked = localStorage.getItem('chk_'+i.id)==='1';
+      html += `<div class="topic-item${checked?' checked':''}" data-id="${i.id}">
+<input type="checkbox" ${checked?'checked':''} data-id="${i.id}">
+<span class="label">${i.label}</span>
+<span class="sub">${i.sub}</span>
+</div>`;
+    });
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+  attachListeners(container);
+}
+
+function renderChecklist(data, containerId) {
+const container = document.getElementById(containerId);
+let html = '';
+Object.keys(data).forEach(group => {
+let items = data[group];
+let done = items.filter(i => localStorage.getItem('chk_'+i.id)==='1').length;
+let total = items.length;
+let pct = total ? Math.round(done/total*100) : 0;
+html += `<div class="topic-group">
+<div class="group-title"><span>${group}</span><span class="prog">${done}/${total} (${pct}%)</span></div>
+<div class="mini-bar"><div class="fill" style="width:${pct}%"></div></div>`;
+items.forEach(i => {
+let checked = localStorage.getItem('chk_'+i.id)==='1';
+html += `<div class="topic-item${checked?' checked':''}" data-id="${i.id}">
+<input type="checkbox" ${checked?'checked':''} data-id="${i.id}">
+<span class="label">${i.label}</span>
+<span class="sub">${i.sub}</span>
+</div>`;
+});
+html += `</div>`;
+});
+container.innerHTML = html;
+attachListeners(container);
+updateAll();
+}
+
+function attachListeners(container) {
+container.querySelectorAll('input[type=checkbox]').forEach(cb => {
+cb.addEventListener('change', function() {
+localStorage.setItem('chk_'+this.dataset.id, this.checked?'1':'0');
+let item = this.closest('.topic-item');
+if(item) item.classList.toggle('checked', this.checked);
+updateGroup(this);
+updateAll();
+});
+});
+container.querySelectorAll('.topic-item').forEach(item => {
+item.addEventListener('click', function(e) {
+if(e.target.tagName !== 'INPUT') {
+let cb = this.querySelector('input[type=checkbox]');
+cb.checked = !cb.checked;
+cb.dispatchEvent(new Event('change'));
+}
+});
+});
+}
+
+function updateGroup(cb) {
+let group = cb.closest('.topic-group');
+if(!group) return;
+let checks = group.querySelectorAll('input[type=checkbox]');
+let done = 0;
+checks.forEach(c => { if(c.checked) done++; });
+let pct = checks.length ? Math.round(done/checks.length*100) : 0;
+let title = group.querySelector('.group-title .prog');
+if(title) title.textContent = `${done}/${checks.length} (${pct}%)`;
+let bar = group.querySelector('.mini-bar .fill');
+if(bar) bar.style.width = pct+'%';
+}
+
+function updateAll() {
+let allCheckboxes = document.querySelectorAll('input[type=checkbox]');
+let total = allCheckboxes.length;
+let done = 0;
+allCheckboxes.forEach(c => { if(c.checked) done++; });
+let pct = total ? Math.round(done/total*100) : 0;
+let fill = document.getElementById('globalFill');
+let pctEl = document.getElementById('globalPct');
+if(fill) fill.style.width = pct+'%';
+if(pctEl) pctEl.textContent = pct+'%';
+}
+
+// ====== CUSTOM LINKS (unlimited, persisted in localStorage) ======
+function renderCustomLinks() {
+const grid = document.getElementById('customLinksGrid');
+if(!grid) return;
+const links = JSON.parse(localStorage.getItem('customLinks') || '[]');
+grid.innerHTML = links.map((l,i) =>
+`<div class="res-card" style="position:relative">
+<button onclick="removeCustomLink(${i})" style="position:absolute;top:4px;right:6px;background:none;border:none;color:var(--accent2);cursor:pointer;font-size:1rem;line-height:1" title="Remove">×</button>
+<h4 contenteditable="true" onblur="editCustomLink(${i},'title',this.textContent)" style="outline:none;padding-right:20px">${l.title}</h4>
+<p style="font-size:.7rem;word-break:break-all">${l.url}</p>
+<a href="${l.url}" target="_blank">Open →</a>
+<a href="#" onclick="editCustomLinkUrl(${i});return false" style="font-size:.7rem;margin-left:8px;opacity:.6">Edit URL</a>
+</div>`
+).join('');
+}
+function addCustomLink() {
+const links = JSON.parse(localStorage.getItem('customLinks') || '[]');
+links.push({title:'🔗 New Link (click to rename)',url:'https://example.com'});
+localStorage.setItem('customLinks',JSON.stringify(links));
+renderCustomLinks();
+}
+function removeCustomLink(idx) {
+let links = JSON.parse(localStorage.getItem('customLinks') || '[]');
+links.splice(idx,1);
+localStorage.setItem('customLinks',JSON.stringify(links));
+renderCustomLinks();
+}
+function editCustomLink(idx,field,val) {
+let links = JSON.parse(localStorage.getItem('customLinks') || '[]');
+links[idx][field]=val;
+localStorage.setItem('customLinks',JSON.stringify(links));
+}
+function editCustomLinkUrl(idx) {
+let links = JSON.parse(localStorage.getItem('customLinks') || '[]');
+let u = prompt('Enter URL:',links[idx].url);
+if(u && u.trim()){ links[idx].url=u.trim(); localStorage.setItem('customLinks',JSON.stringify(links)); renderCustomLinks(); }
+}
+function clearCustomLinks() {
+if(confirm('Delete all custom links?')){ localStorage.setItem('customLinks','[]'); renderCustomLinks(); }
+}
+
+// ====== MNC SEMESTER BUTTON STYLES ======
+const semStyle = document.createElement('style');
+semStyle.textContent = `
+.sem-btn-mnc{padding:8px 18px;border:2px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-weight:600;cursor:pointer;transition:all .25s;flex:1;min-width:80px}
+.sem-btn-mnc.active{border-color:var(--accent);background:var(--accent);color:#fff}
+.sem-btn-mnc:hover{border-color:var(--accent);background:var(--card2)}
+.sem-btn-mnc.active:hover{background:var(--accent)}
+`;
+document.head.appendChild(semStyle);
+
+// ====== CALENDAR / PLANNER ======
+const examMilestones = [
+{date:'2026-06-15',label:'▶ Start Prep',type:'start',color:'#4ade80'},
+{date:'2027-02-07',label:'GATE 2027 (Practice)',type:'gate',color:'#6c63ff'},
+{date:'2027-02-14',label:'JAM 2027',type:'jam',color:'#a855f7'},
+{date:'2027-12-01',label:'TIFR GS 2027',type:'tifr',color:'#059669'},
+{date:'2028-02-06',label:'GATE 2028 (Practice)',type:'gate',color:'#6c63ff'},
+{date:'2028-02-13',label:'JAM 2028',type:'jam',color:'#a855f7'},
+{date:'2028-12-01',label:'TIFR GS 2028',type:'tifr',color:'#059669'},
+{date:'2029-02-04',label:'GATE 2029 (1st Attempt)',type:'gate',color:'#f72585'},
+{date:'2029-02-11',label:'JAM 2029',type:'jam',color:'#a855f7'},
+{date:'2029-05-01',label:'ISI/CMI 2029',type:'research',color:'#db2777'},
+{date:'2029-11-25',label:'CAT 2029',type:'cat',color:'#f97316'},
+{date:'2029-12-01',label:'TIFR GS 2029',type:'tifr',color:'#059669'},
+{date:'2030-01-15',label:'NBHM 2030',type:'nbhm',color:'#ca8a04'},
+{date:'2030-02-03',label:'GATE 2030 (Final)',type:'gate',color:'#f72585'},
+{date:'2030-02-10',label:'JAM 2030',type:'jam',color:'#a855f7'},
+{date:'2030-05-01',label:'ISI/CMI 2030',type:'research',color:'#db2777'},
+{date:'2030-05-26',label:'UPSC Prelims 2030',type:'upsc',color:'#f72585'},
+{date:'2030-09-01',label:'UPSC Mains 2030',type:'upsc',color:'#f72585'},
+{date:'2030-11-24',label:'CAT 2030',type:'cat',color:'#f97316'},
+];
+
+const weekDayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Routine mapping: Sunday=Day1(GS), Monday=Day2(English), ..., Saturday=Day7(Chill)
+const routineByDay = {
+0:{name:'Day 1 · 3 · 5 (GS Day)',tag:'gs',desc:'GS: Polity, History, Geo, Econ, Env, S&T, Ethics',tasks:['📖 GS Core Book (Laxmikanth/Spectrum/Leong) — 1H','🎥 GS Video Lecture — 1H','📝 GS MCQ Practice — 30M','📝 GS Revision (Previous day notes) — 30M']},
+1:{name:'Day 2 (English Day)',tag:'lang',desc:'Tarun Grover + WPME + Novels + Express + Hindu',tasks:['📖 Tarun Grover Grammar — 1H','📖 Word Power Made Easy (1 session) — 30M','📖 Indian Express Explained + The Hindu — 1H','📝 Vocabulary diary + comprehension — 30M']},
+2:{name:'Day 1 · 3 · 5 (GS Day)',tag:'gs',desc:'GS: Polity, History, Geo, Econ, Env, S&T, Ethics',tasks:['📖 GS Core Book (Laxmikanth/Spectrum/Leong) — 1H','🎥 GS Video Lecture — 1H','📝 GS MCQ Practice — 30M','📝 GS Revision (Previous day notes) — 30M']},
+3:{name:'Day 4 (Hindi Day)',tag:'lang',desc:'Hindi Vyakaran + Dainik Jagran',tasks:['📖 Hindi Vyakaran (Grammar) — 1H','📖 Dainik Jagran Editorial — 1H','📝 Hindi writing practice (1 page) — 1H']},
+4:{name:'Day 1 · 3 · 5 (GS Day)',tag:'gs',desc:'GS: Polity, History, Geo, Econ, Env, S&T, Ethics',tasks:['📖 GS Core Book (Laxmikanth/Spectrum/Leong) — 1H','🎥 GS Video Lecture — 1H','📝 GS MCQ Practice — 30M','📝 GS Revision (Previous day notes) — 30M']},
+5:{name:'Day 6 (Dual Language)',tag:'both',desc:'English + Hindi translation practice',tasks:['📖 English Grammar Advanced — 45M','📖 Hindi Vyakaran Advanced — 45M','📝 English ⇄ Hindi Translation (1 para each) — 30M','📝 Express/Hindu editorial summary in Hindi — 30M']},
+6:{name:'Day 7 (Consolidation & Chill)',tag:'chill',desc:'1.5-2H audit + micro-revision, rest OFF',tasks:['📋 Update tracker — 15M','📝 Micro-revision (weak topics) — 1H','📝 Quick PYQ practice — 30M','🎮 OFF — Recharge, hobbies, friends']},
+};
+
+function getDayRoutine(dayOfWeek) { return routineByDay[dayOfWeek] || routineByDay[0]; }
+
+function getSemester(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const y = d.getFullYear();
+  const m = d.getMonth() + 1;
+  // Academic year starts June 15
+  if (y === 2026 && m >= 6) return 'Sem 1 (Jun-Dec 2026)';
+  if (y === 2027 && m <= 5) return 'Sem 2 (Jan-May 2027)';
+  if (y === 2027 && m >= 6) return 'Sem 3 (Jun-Dec 2027)';
+  if (y === 2028 && m <= 5) return 'Sem 4 (Jan-May 2028)';
+  if (y === 2028 && m >= 6) return 'Sem 5 (Jun-Dec 2028)';
+  if (y === 2029 && m <= 5) return 'Sem 6 (Jan-May 2029)';
+  if (y === 2029 && m >= 6) return 'Sem 7 (Jun-Dec 2029)';
+  if (y === 2030 && m <= 5) return 'Sem 8 (Jan-May 2030)';
+  if (y >= 2030 && m >= 6) return 'Post-Grad Prep Phase';
+  return 'Break / Self-Study';
+}
+
+function getPendingTopics(dataObj, count) {
+  let all = [];
+  Object.values(dataObj).forEach(arr => {
+    if (Array.isArray(arr)) all = all.concat(arr);
+  });
+  const pending = all.filter(item => localStorage.getItem('chk_'+item.id) !== '1');
+  return pending.slice(0, count);
+}
+
+function generateDayTasks(dateStr) {
+  const d = new Date(dateStr);
+  const dow = d.getDay();
+  const routine = getDayRoutine(dow);
+  let tasks = [];
+  const sem = getSemester(dateStr);
+  
+  if (sem.includes('Sem')) {
+    tasks.push({id:'tsk_'+dateStr+'_sem', label:'📚 '+sem+' — Academic coursework', tag:'sem', done:false});
+  }
+  
+  // Eng topics from gateData
+  const engTopics = getPendingTopics(gateData, 2);
+  if (engTopics.length) {
+    engTopics.forEach(t => tasks.push({id:'chk_'+t.id, label:'🖥️ [Eng] '+t.label, tag:'eng', sub: t.sub, done:false}));
+  } else {
+    tasks.push({id:'tsk_'+dateStr+'_eng', label:'🖥️ Engineering/MnC — Semester courses + DSA', tag:'eng', done:false});
+  }
+  
+  // Maths Optional
+  const mathsTopics = getPendingTopics(mathsOptData, 1);
+  if (mathsTopics.length) {
+    mathsTopics.forEach(t => tasks.push({id:'chk_'+t.id, label:'🧮 [Maths] '+t.label, tag:'maths', sub: t.sub, done:false}));
+  } else {
+    tasks.push({id:'tsk_'+dateStr+'_maths', label:'🧮 Maths Optional — PYQ practice', tag:'maths', done:false});
+  }
+  
+  // Day-specific topics based on routine
+  if (routine.tag === 'gs') {
+    const gsTopics = getPendingTopics(gsData, 2);
+    const upscTopics = getPendingTopics(upscGSData, 1);
+    const combined = [...gsTopics, ...upscTopics];
+    if (combined.length) {
+      combined.forEach(t => tasks.push({id:'chk_'+t.id, label:'📖 [GS] '+t.label, tag:'gs', sub: t.sub, done:false}));
+    } else {
+      tasks.push({id:'tsk_'+dateStr+'_gs', label:'📖 GS: '+routine.desc, tag:'gs', done:false});
+    }
+  } else if (routine.tag === 'lang' && routine.name.includes('English')) {
+    const engLang = getPendingTopics({'English Core': langData['English Core'] || []}, 2);
+    if (engLang.length) {
+      engLang.forEach(t => tasks.push({id:'chk_'+t.id, label:'📖 [Eng] '+t.label, tag:'lang', sub: t.sub, done:false}));
+    } else {
+      tasks.push({id:'tsk_'+dateStr+'_en', label:'📖 English: Tarun Grover + WPME + IE/Hindu', tag:'lang', done:false});
+    }
+  } else if (routine.tag === 'lang' && routine.name.includes('Hindi')) {
+    const hindiLang = getPendingTopics({'Hindi Core': langData['Hindi Core'] || []}, 2);
+    if (hindiLang.length) {
+      hindiLang.forEach(t => tasks.push({id:'chk_'+t.id, label:'📖 [Hindi] '+t.label, tag:'lang', sub: t.sub, done:false}));
+    } else {
+      tasks.push({id:'tsk_'+dateStr+'_hi', label:'📖 Hindi: Vyakaran + Dainik Jagran', tag:'lang', done:false});
+    }
+  } else if (routine.tag === 'both') {
+    const bothTopics = [];
+    const e1 = getPendingTopics({'English Core': langData['English Core'] || []}, 1);
+    const h1 = getPendingTopics({'Hindi Core': langData['Hindi Core'] || []}, 1);
+    const es1 = getPendingTopics({'Mains': langData['Mains Essentials'] || []}, 1);
+    e1.forEach(t => bothTopics.push({...t, label:'📖 [Eng] '+t.label}));
+    h1.forEach(t => bothTopics.push({...t, label:'📖 [Hindi] '+t.label}));
+    es1.forEach(t => bothTopics.push({...t, label:'📝 [Essay] '+t.label}));
+    if (bothTopics.length) {
+      bothTopics.forEach(t => tasks.push({id:'chk_'+t.id, label:t.label, tag:'both', sub: t.sub, done:false}));
+    } else {
+      tasks.push({id:'tsk_'+dateStr+'_both', label:'📖 Lang: English + Hindi + Essay practice', tag:'both', done:false});
+    }
+  } else if (routine.tag === 'chill') {
+    tasks.push({id:'tsk_'+dateStr+'_chill', label:'🎮 Chill Day — Micro-revision + rest', tag:'chill', done:false});
+    const revTopics = getPendingTopics(gsData, 1);
+    if (revTopics.length) {
+      revTopics.forEach(t => tasks.push({id:'chk_'+t.id, label:'📖 [Rev] '+t.label, tag:'chill', sub: t.sub, done:false}));
+    }
+  }
+  
+  const ms = examMilestones.filter(m => m.date === dateStr);
+  ms.forEach(m => {
+    tasks.push({id:'tsk_'+dateStr+'_ms_'+m.label.replace(/[^a-z0-9]/gi,'_'), label:'🔴 MILESTONE: '+m.label, tag:'ms', done:false});
+  });
+  
+  return {tasks, sem, routine, milestones: ms};
+}
+
+let calState = {year:2026, month:5, selectedDate:null}; // June 2026
+
+function initCalendar() {
+  // Start from June 15, 2026
+  const startDate = new Date(2026, 5, 15);
+  calState.year = startDate.getFullYear();
+  calState.month = startDate.getMonth();
+  
+  // Populate month select
+  const ms = document.getElementById('calMonthSelect');
+  monthNames.forEach((n,i) => {
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = n;
+    if (i === calState.month) opt.selected = true;
+    ms.appendChild(opt);
+  });
+  
+  // Populate year select
+  const ys = document.getElementById('calYearSelect');
+  for (let y = 2026; y <= 2032; y++) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    if (y === calState.year) opt.selected = true;
+    ys.appendChild(opt);
+  }
+  
+  // Event listeners
+  document.getElementById('calPrev').addEventListener('click', function(){
+    // Don't go before June 2026
+    if (calState.year === 2026 && calState.month === 5) return;
+    calState.month--;
+    if (calState.month < 0) { calState.month = 11; calState.year--; }
+    document.getElementById('calMonthSelect').value = calState.month;
+    document.getElementById('calYearSelect').value = calState.year;
+    renderCalendar();
+  });
+  document.getElementById('calNext').addEventListener('click', function(){
+    calState.month++;
+    if (calState.month > 11) { calState.month = 0; calState.year++; }
+    document.getElementById('calMonthSelect').value = calState.month;
+    document.getElementById('calYearSelect').value = calState.year;
+    renderCalendar();
+  });
+  document.getElementById('calToday').addEventListener('click', function(){
+    const t = new Date();
+    calState.year = t.getFullYear();
+    calState.month = t.getMonth();
+    document.getElementById('calMonthSelect').value = calState.month;
+    document.getElementById('calYearSelect').value = calState.year;
+    renderCalendar();
+    const ds = String(t.getDate()).padStart(2,'0');
+    const ms = String(t.getMonth()+1).padStart(2,'0');
+    selectDate(calState.year+'-'+ms+'-'+ds);
+  });
+  document.getElementById('calMonthSelect').addEventListener('change', function(){
+    calState.month = parseInt(this.value);
+    renderCalendar();
+  });
+  document.getElementById('calYearSelect').addEventListener('change', function(){
+    calState.year = parseInt(this.value);
+    renderCalendar();
+  });
+  
+  renderCalendar();
+  // Select June 15, 2026 (start date)
+  const initD = new Date(2026, 5, 15);
+  const ds2 = String(initD.getDate()).padStart(2,'0');
+  const ms2 = String(initD.getMonth()+1).padStart(2,'0');
+  selectDate(initD.getFullYear()+'-'+ms2+'-'+ds2);
+}
+
+function selectDate(dateStr) {
+  calState.selectedDate = dateStr;
+  renderCalendar();
+  renderDayDetail(dateStr);
+}
+
+function renderCalendar() {
+  const container = document.getElementById('calDays');
+  if (!container) return;
+  const y = calState.year;
+  const m = calState.month;
+  const today = new Date();
+  const todayStr = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const daysInPrev = new Date(y, m, 0).getDate();
+  
+  let html = '';
+  
+  const startLimit = '2026-06-15'; // No clickable days before this
+  
+  // Previous month days (blank if before startLimit)
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const day = daysInPrev - i;
+    const mStr = String(m).padStart(2,'0');
+    const dStr = String(day).padStart(2,'0');
+    const prevY = m === 0 ? (y-1) : y;
+    const prevM = m === 0 ? 12 : m;
+    const dateStr = prevY+'-'+String(prevM).padStart(2,'0')+'-'+dStr;
+    if (dateStr < startLimit) {
+      html += `<div class="cal-day other-month" style="cursor:default;opacity:0.15;pointer-events:none"><span class="day-num"></span></div>`;
+    } else {
+      html += `<div class="cal-day other-month" data-date="${dateStr}"><span class="day-num">${day}</span></div>`;
+    }
+  }
+  
+  // Current month days
+  for (let day = 1; day <= daysInMonth; day++) {
+    const mStr = String(m + 1).padStart(2,'0');
+    const dStr = String(day).padStart(2,'0');
+    const dateStr = y+'-'+mStr+'-'+dStr;
+    const isoDate = dateStr;
+    
+    if (isoDate < startLimit) {
+      html += `<div class="cal-day other-month" style="cursor:default;opacity:0.15;pointer-events:none"><span class="day-num">${day}</span></div>`;
+      continue;
+    }
+    
+    let cls = 'cal-day';
+    if (isoDate === todayStr) cls += ' today';
+    if (isoDate === calState.selectedDate) cls += ' selected';
+    
+    // Check milestones
+    const ms = examMilestones.filter(m => m.date === isoDate);
+    const dow = new Date(y, m, day).getDay();
+    const routine = getDayRoutine(dow);
+    
+    // Count completed tasks
+    const taskIds = generateDayTasks(isoDate).tasks.map(t => t.id);
+    const doneCount = taskIds.filter(id => localStorage.getItem(id) === '1').length;
+    
+    let dotsHtml = '';
+    if (ms.length > 0) dotsHtml += `<span class="day-dot milestone-dot"></span>`;
+    if (doneCount > 0) dotsHtml += `<span class="day-dot task-dot"></span>`;
+    
+    let msLabel = '';
+    if (ms.length > 0) msLabel = `<div class="milestone-label">${ms[0].label}</div>`;
+    
+    html += `<div class="${cls}" data-date="${isoDate}">
+<span class="day-num">${day}</span>
+${dotsHtml ? `<div class="day-dots">${dotsHtml}</div>` : ''}
+${msLabel}
+</div>`;
+  }
+  
+  // Next month days
+  const totalCells = firstDay + daysInMonth;
+  const remaining = (7 - (totalCells % 7)) % 7;
+  for (let day = 1; day <= remaining; day++) {
+    const dStr = String(day).padStart(2,'0');
+    const dateStr = (m === 11 ? (y+1) : y)+'-'+String(m === 11 ? 1 : m+2).padStart(2,'0')+'-'+dStr;
+    html += `<div class="cal-day other-month" data-date="${dateStr}"><span class="day-num">${day}</span></div>`;
+  }
+  
+  container.innerHTML = html;
+  
+  // Day click handlers
+  container.querySelectorAll('.cal-day').forEach(el => {
+    function dayTapHandler(e) {
+      const dateStr = el.dataset.date;
+      if (dateStr) {
+        calState.selectedDate = dateStr;
+        renderCalendar();
+        renderDayDetail(dateStr);
+      }
+    }
+    el.addEventListener('click', dayTapHandler);
+    el.addEventListener('touchstart', dayTapHandler, {passive:true});
+  });
+}
+
+function getSunday(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const dow = d.getDay();
+  d.setDate(d.getDate() - dow);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function getBacklog(dateStr) {
+  try { return JSON.parse(localStorage.getItem('bl_'+dateStr) || '[]'); } catch(e) { return []; }
+}
+function setBacklog(dateStr, items) {
+  localStorage.setItem('bl_'+dateStr, JSON.stringify(items));
+}
+
+function renderDayDetail(dateStr) {
+  const titleEl = document.getElementById('dayDetailTitle');
+  const contentEl = document.getElementById('dayDetailContent');
+  if (!titleEl || !contentEl) return;
+  
+  const d = new Date(dateStr + 'T12:00:00');
+  const dow = d.getDay();
+  const routine = getDayRoutine(dow);
+  const sem = getSemester(dateStr);
+  const dayData = generateDayTasks(dateStr);
+  
+  const dateDisplay = weekDayNames[dow] + ', ' + d.getDate() + ' ' + monthNames[d.getMonth()] + ' ' + d.getFullYear();
+  titleEl.textContent = '📋 ' + dateDisplay;
+  
+  let html = '<div style="margin-bottom:8px;display:flex;gap:8px;flex-wrap:wrap">';
+  html += `<span class="tag ${routine.tag}" style="background:var(--accent);font-size:.72rem">${routine.name}</span>`;
+  if (sem) html += `<span class="tag" style="background:#2563eb;font-size:.72rem">${sem}</span>`;
+  html += '</div>';
+  
+  let allDone = 0, allTotal = 0, allItems = [];
+  
+  // Collect backlog items for this day
+  const backlogItems = getBacklog(dateStr);
+  
+  // Regular tasks
+  dayData.tasks.forEach(t => {
+    allItems.push({id:t.id, label:t.label, tag:t.tag, backlog:false, sub: t.sub||''});
+  });
+  // Backlog items
+  backlogItems.forEach((b, bi) => {
+    allItems.push({id:'bl_'+dateStr+'_'+bi, label:'📦 BACKLOG: '+b.label, tag:b.tag||'bl', backlog:true, backlogIdx:bi});
+  });
+  
+  html += '<div id="dayTaskList">';
+  allItems.forEach(t => {
+    const done = t.backlog ? false : localStorage.getItem(t.id) === '1';
+    if (done) allDone++;
+    allTotal++;
+    const tagColor = t.tag === 'eng' ? '#6c63ff' : t.tag === 'gs' ? '#2563eb' : t.tag === 'maths' ? '#7c3aed' : t.tag === 'phy' ? '#059669' : t.tag === 'sem' ? '#f97316' : t.tag === 'ms' ? '#dc2626' : t.tag === 'bl' ? '#f59e0b' : '#9333ea';
+    html += `<div class="task-item-list${done?' done':''}" data-task-id="${t.id}">
+<input type="checkbox" ${done?'checked':''} data-task-id="${t.id}" ${t.backlog?'disabled':''}>
+<span><span class="task-label">${t.label}</span>${t.sub ? '<br><span class="task-sub">'+t.sub+'</span>' : ''}</span>
+<span class="task-tag" style="background:${tagColor};color:#fff">${t.tag.toUpperCase()}</span>`;
+    // Add backlog button only on non-backlog, non-milestone, non-semester items
+    if (!t.backlog && t.tag !== 'sem' && t.tag !== 'ms') {
+      html += `<button class="bl-btn" data-bl-task-id="${t.id}" data-bl-label="${t.label.replace(/"/g,'&quot;')}" data-bl-tag="${t.tag}" title="Move to Sunday backlog">📦 Bl</button>`;
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  
+  // Progress
+  const pct = allTotal ? Math.round(allDone/allTotal*100) : 0;
+  html += `<div style="margin-top:8px;display:flex;align-items:center;gap:10px"><span style="font-size:.8rem">Day Progress:</span>
+<div class="mini-bar" style="flex:1"><div class="fill" style="width:${pct}%"></div></div>
+<span style="font-size:.8rem;font-weight:700">${allDone}/${allTotal} (${pct}%)</span></div>`;
+  
+  contentEl.innerHTML = html;
+  
+  // Task checkbox listeners
+  contentEl.querySelectorAll('input[type=checkbox]:not([disabled])').forEach(cb => {
+    cb.addEventListener('change', function() {
+      localStorage.setItem(this.dataset.taskId, this.checked ? '1' : '0');
+      const parent = this.closest('.task-item-list');
+      if (parent) parent.classList.toggle('done', this.checked);
+      renderCalendar();
+      renderDayDetail(dateStr);
+    });
+  });
+  
+  // Backlog button listeners
+  contentEl.querySelectorAll('.bl-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const taskId = this.dataset.blTaskId;
+      const label = this.dataset.blLabel;
+      const tag = this.dataset.blTag;
+      const sunday = getSunday(dateStr);
+      const bl = getBacklog(sunday);
+      bl.push({label:label, tag:tag});
+      setBacklog(sunday, bl);
+      // Mark original task as done
+      localStorage.setItem(taskId, '1');
+      renderCalendar();
+      renderDayDetail(dateStr);
+    });
+    btn.addEventListener('touchstart', function() {
+      this.click();
+    }, {passive:true});
+  });
+}
+
+// ====== INIT ======
+document.addEventListener('DOMContentLoaded', function() {
+initCalendar();
+renderAllExams();
+renderCustomLinks();
+renderChecklist(gsData, 'gsContent');
+renderChecklist(langData, 'langContent');
+renderChecklist(gateData, 'gateContent');
+renderChecklist(upscGSData, 'upscGSContent');
+renderChecklist(mathsOptData, 'mathsOptContent');
+renderChecklist(electivesData, 'electivesContent');
+renderMnCSem(1);
+
+// MnC Semester buttons
+document.querySelectorAll('.sem-btn-mnc').forEach(btn => {
+btn.addEventListener('click', function() {
+document.querySelectorAll('.sem-btn-mnc').forEach(b => b.classList.remove('active'));
+this.classList.add('active');
+renderMnCSem(this.dataset.mnc);
+window.scrollTo({top:document.getElementById('mncSemContent').offsetTop-80,behavior:'smooth'});
+});
+});
+function switchTab(tabId) {
+document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+document.getElementById(tabId).classList.add('active');
+window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.tab-btn').forEach(btn => {
+function tabHandler(e) { switchTab(this.dataset.tab); }
+btn.addEventListener('click', tabHandler);
+btn.addEventListener('touchstart', tabHandler, {passive:true});
+});
+
+// Theme toggle
+const tt = document.getElementById('themeToggle');
+let isDark = localStorage.getItem('theme') !== 'light';
+applyTheme();
+tt.addEventListener('click', function() {
+isDark = !isDark;
+localStorage.setItem('theme', isDark?'dark':'light');
+applyTheme();
+});
+
+function applyTheme() {
+document.body.classList.toggle('light', !isDark);
+document.getElementById('themeToggle').textContent = isDark?'☀️ Light':'🌙 Dark';
+}
+});
+
+// Final update on load
+setTimeout(updateAll, 100);
+</script>
+</body>
+</html>

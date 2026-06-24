@@ -389,15 +389,16 @@ def api_llama_chat():
     data = request.json
     prompt = data.get("prompt", "")
     context = data.get("context", "")
+    system_override = data.get("system", "")
     memory_instruction = (
         "If user shares anything personal worth remembering, end your reply with "
         "[MEMO:category:detail] — like [MEMO:weakness:calculus] or [MEMO:topic:linear algebra] or "
         "[MEMO:goal:crack GATE] or [MEMO:mistake:skipped revision]"
     )
-    system = f"You are a friendly study assistant. Be concise. {memory_instruction}"
+    system = system_override or f"You are a friendly study assistant. Be concise. {memory_instruction}"
     full_prompt = f"{context}\n\nUser: {prompt}" if context else prompt
     old_max = llama.max_tokens
-    llama.max_tokens = 256
+    llama.max_tokens = min(data.get("max_tokens", 512), 1024)
     resp = llama.ask(full_prompt, system)
     llama.max_tokens = old_max
 

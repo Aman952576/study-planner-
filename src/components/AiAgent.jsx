@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { parseAndExecuteActions, stripActions, AI_SYSTEM_PROMPT } from '../utils/actionParser'
 
 const API = '/api'
 const STORAGE_KEY = 'ls_messages'
@@ -146,20 +147,30 @@ export default function AiAgent() {
       const memoryCtx = gc ? 'My Memory about user:\n' + Object.entries(gc).filter(([k]) => !['total_nodes', 'total_edges', 'vector_memories'].includes(k)).map(([type, items]) => `- ${type}: ${items.join(', ')}`).join('\n') : ''
       const vc = await api(`/memory/context?q=${encodeURIComponent(prompt)}`)
       const fullMemCtx = [memoryCtx, vc?.context].filter(Boolean).join('\n\n')
+      const fullPrompt = `${fullMemCtx}\n\nUser: ${prompt}`
       const res = await fetch(`${API}/llama/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, context: fullMemCtx }),
+        body: JSON.stringify({ prompt: fullPrompt, system: AI_SYSTEM_PROMPT }),
         signal: abortRef.current.signal
       })
       const r = await res.json()
       if (r) {
         let reply = r.response || 'No response'
-        if (r.memories?.length) reply += `\n\n🧠 ${r.memories.length} thing${r.memories.length > 1 ? 's' : ''} auto-saved to memory`
-        setAiResponse(reply)
+        const actions = await parseAndExecuteActions(reply)
+        const cleanReply = stripActions(reply)
+        let display = cleanReply
+        if (r.memories?.length) display += `\n\n🧠 ${r.memories.length} thing${r.memories.length > 1 ? 's' : ''} auto-saved to memory`
+        if (actions.length) {
+          const actionResults = actions.map(a => a.result).join('\n')
+          display += `\n\n${actionResults}`
+          loadGraph()
+          loadTasks()
+        }
+        setAiResponse(display)
 
         const userMsg = { role: 'user', content: prompt, timestamp: new Date().toISOString() }
-        const aiMsg = { role: 'assistant', content: reply, timestamp: new Date().toISOString() }
+        const aiMsg = { role: 'assistant', content: display, timestamp: new Date().toISOString() }
         const updated = [...chatHistory, userMsg, aiMsg]
         setChatHistory(updated)
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(updated)) } catch {}

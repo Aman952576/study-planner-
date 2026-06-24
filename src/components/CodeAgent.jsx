@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { parseAndExecuteCodeActions, stripActions, CODE_SYSTEM_PROMPT } from '../utils/actionParser'
 
 const API = '/api'
 const MSG_KEY = 'ca_messages'
@@ -85,7 +86,7 @@ export default function CodeAgent() {
     const ctx = `Project files:\n${files.join('\n')}\n${fullCtx}`
     const r = await api('/llama/chat', {
       method: 'POST',
-      body: JSON.stringify({ prompt, context: ctx })
+      body: JSON.stringify({ prompt: prompt, system: CODE_SYSTEM_PROMPT, context: ctx })
     })
 
     clearInterval(interval)
@@ -93,7 +94,30 @@ export default function CodeAgent() {
     setTimer(0)
 
     if (r?.response) {
-      setMessages(prev => [...prev, { role: 'assistant', text: r.response }])
+      let reply = r.response
+      const codeActions = await parseAndExecuteCodeActions(reply)
+      const cleanReply = stripActions(reply)
+      let display = cleanReply
+
+      const readResults = codeActions.filter(a => a.type === 'read')
+      const otherResults = codeActions.filter(a => a.type !== 'read')
+
+      if (readResults.length) {
+        const fileBlocks = readResults.map(a => {
+          if (typeof a.result === 'object' && a.result.content) {
+            return `📄 **${a.result.path}**\n\`\`\`\n${a.result.content.slice(0, 1500)}${a.result.content.length > 1500 ? '\n... (truncated)' : ''}\n\`\`\``
+          }
+          return typeof a.result === 'string' ? a.result : ''
+        }).filter(Boolean).join('\n\n')
+        if (fileBlocks) display += `\n\n${fileBlocks}`
+      }
+      if (otherResults.length) {
+        display += `\n\n${otherResults.map(a => a.result).join('\n')}`
+        loadFiles()
+        loadGraph()
+      }
+
+      setMessages(prev => [...prev, { role: 'assistant', text: display }])
       if (r.memories?.length) {
         loadGraph()
         setMessages(prev => [...prev, { role: 'system', text: `🧠 ${r.memories.length} thing${r.memories.length > 1 ? 's' : ''} saved to memory` }])

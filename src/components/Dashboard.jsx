@@ -189,7 +189,7 @@ export default function Dashboard({ activeSection, onNavigate }) {
 
   const Section = sections[activeSection]?.component
 
-  if (Section) return <Section />
+  if (Section) return <><Section /><FloatingAssistant /></>
 
   // Dashboard overview
   const chartData = [
@@ -605,8 +605,6 @@ export default function Dashboard({ activeSection, onNavigate }) {
         </p>
         <p className="text-[9px] mt-2" style={{ color: 'var(--muted)', opacity: 0.4 }}>— refreshes every hour —</p>
       </div>
-
-      <FloatingAssistant />
     </div>
   )
 }

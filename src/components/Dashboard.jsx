@@ -605,6 +605,8 @@ export default function Dashboard({ activeSection, onNavigate }) {
         </p>
         <p className="text-[9px] mt-2" style={{ color: 'var(--muted)', opacity: 0.4 }}>— refreshes every hour —</p>
       </div>
+
+      <FloatingAssistant />
     </div>
   )
 }

@@ -25,7 +25,13 @@ function AppContent() {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: loginPass })
     })
-    if (r.ok) { setAuthed(true) } else { setLoginErr('Wrong password') }
+    if (r.ok) {
+      const d = await r.json()
+      setAuthed(true)
+      localStorage.setItem('st_user', d?.user || '')
+    } else {
+      setLoginErr('Wrong password')
+    }
   }
 
   if (authed === null) return null

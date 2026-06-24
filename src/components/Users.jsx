@@ -5,7 +5,7 @@ export default function Users() {
   const [newName, setNewName] = useState('')
   const [newPass, setNewPass] = useState('')
   const [msg, setMsg] = useState('')
-  const [isAdmin, setIsAdmin] = useState(false)
+  const isAdmin = localStorage.getItem('st_user') === 'admin'
 
   const api = async (url, opts = {}) => {
     try {
@@ -13,17 +13,17 @@ export default function Users() {
         headers: { 'Content-Type': 'application/json' },
         ...opts
       })
-      if (res.status === 403) { setIsAdmin(false); return null }
       return await res.json()
     } catch { return null }
   }
 
   const load = async () => {
+    if (!isAdmin) return
     const d = await api('/api/auth/users')
-    if (d && Array.isArray(d)) { setUsers(d); setIsAdmin(true) }
+    if (d && Array.isArray(d)) setUsers(d)
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { if (isAdmin) load() }, [isAdmin])
 
   const handleAdd = async () => {
     if (!newName.trim() || !newPass.trim()) return

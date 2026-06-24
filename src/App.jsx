@@ -5,6 +5,7 @@ import VideoIntro from './components/VideoIntro'
 import Dashboard from './components/Dashboard'
 import Drawer from './components/Drawer'
 import ThemeCustomizer from './components/ThemeCustomizer'
+import FloatingAssistant from './components/FloatingAssistant'
 
 function AppContent() {
   const { showIntro, setShowIntro, skipIntro } = useTheme()
@@ -109,6 +110,7 @@ function AppContent() {
       </div>
 
       {themeOpen && <ThemeCustomizer onClose={() => setThemeOpen(false)} />}
+      <FloatingAssistant />
     </div>
   )
 }

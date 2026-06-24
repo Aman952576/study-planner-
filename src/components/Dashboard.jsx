@@ -22,7 +22,6 @@ import AiAgent from './AiAgent'
 import CodeAgent from './CodeAgent'
 import Mnc from './MNC'
 import Users from './Users'
-import FloatingAssistant from './FloatingAssistant'
 
 const QUOTES = [
   'Success is the sum of small efforts repeated day in and day out.',
@@ -189,7 +188,7 @@ export default function Dashboard({ activeSection, onNavigate }) {
 
   const Section = sections[activeSection]?.component
 
-  if (Section) return <><Section /><FloatingAssistant /></>
+  if (Section) return <Section />
 
   // Dashboard overview
   const chartData = [
@@ -605,8 +604,6 @@ export default function Dashboard({ activeSection, onNavigate }) {
         </p>
         <p className="text-[9px] mt-2" style={{ color: 'var(--muted)', opacity: 0.4 }}>— refreshes every hour —</p>
       </div>
-
-      <FloatingAssistant />
     </div>
   )
 }

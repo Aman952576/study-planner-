@@ -90,16 +90,57 @@ def api_auth_check():
 def api_auth_login():
     data = request.json or request.form
     p = data.get("password", "")
-    if p == APP_PASSWORD:
+    if APP_PASSWORD and p == APP_PASSWORD:
         session['authed'] = True
+        session['username'] = 'admin'
         session.permanent = True
-        return jsonify({"ok": True})
+        return jsonify({"ok": True, "user": "admin"})
+    from agent.supabase_db import supabase_available, get_client
+    if supabase_available():
+        client = get_client()
+        res = client.table("app_users").select("*").eq("password", p).maybe_single().execute()
+        if res.data:
+            session['authed'] = True
+            session['username'] = res.data.get("username", "user")
+            session.permanent = True
+            return jsonify({"ok": True, "user": session['username']})
     return jsonify({"error": "wrong password"}), 401
 
 @app.route("/api/auth/logout", methods=["POST"])
 def api_auth_logout():
     session.pop('authed', None)
+    session.pop('username', None)
     return jsonify({"ok": True})
+
+@app.route("/api/auth/adduser", methods=["POST"])
+def api_auth_adduser():
+    if not session.get('authed') or session.get('username') != 'admin':
+        return jsonify({"error": "admin only"}), 403
+    data = request.json
+    uname = data.get("username", "").strip()
+    pwd = data.get("password", "").strip()
+    if not uname or not pwd:
+        return jsonify({"error": "username and password required"}), 400
+    from agent.supabase_db import supabase_available, get_client
+    if not supabase_available():
+        return jsonify({"error": "no database"}), 500
+    client = get_client()
+    existing = client.table("app_users").select("id").eq("username", uname).maybe_single().execute()
+    if existing.data:
+        return jsonify({"error": "user exists"}), 400
+    client.table("app_users").insert({"username": uname, "password": pwd}).execute()
+    return jsonify({"ok": True, "username": uname})
+
+@app.route("/api/auth/users", methods=["GET"])
+def api_auth_users():
+    if not session.get('authed') or session.get('username') != 'admin':
+        return jsonify({"error": "admin only"}), 403
+    from agent.supabase_db import supabase_available, get_client
+    if not supabase_available():
+        return jsonify([])
+    client = get_client()
+    res = client.table("app_users").select("username,created_at").execute()
+    return jsonify(res.data or [])
 
 @app.route("/healthz")
 def healthz():

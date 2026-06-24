@@ -1,5 +1,5 @@
-import sys, os, json, webbrowser, threading, re
-from flask import Flask, jsonify, request, send_from_directory
+import sys, os, json, webbrowser, threading, re, secrets
+from flask import Flask, jsonify, request, send_from_directory, session, redirect
 from flask_cors import CORS
 from datetime import datetime, date
 
@@ -20,6 +20,8 @@ from agent.vectormemory import VectorMemory
 app = Flask(__name__, static_folder='dist', static_url_path='')
 CORS(app)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app.secret_key = os.environ.get("FLASK_SECRET", secrets.token_hex(32))
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "")
 
 db = JSONDB()
 graph = GraphRAG(db)
@@ -32,6 +34,72 @@ scheduler = Scheduler(db, todo)
 llama = LlamaEngine()
 vmem = VectorMemory()
 reporter = ReportGenerator(db, reality, backlog, graph, scheduler, llama)
+
+# ─── Simple password protection ───────────────────────────
+if APP_PASSWORD:
+    @app.before_request
+    def check_auth():
+        if request.method == 'OPTIONS':
+            return
+        if request.path in ('/login', '/api/auth/login', '/api/auth/check', '/healthz', '/clear-sw', '/sw.js', '/mnc'):
+            return
+        if request.path.startswith('/api/'):
+            if not session.get('authed'):
+                return jsonify({"error": "login required"}), 401
+
+@app.route("/login")
+def login_page():
+    if session.get('authed'):
+        return redirect('/')
+    html = '''<!DOCTYPE html><html><head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login - Study Planner</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0f0f13;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.card{background:#1a1a23;border:1px solid #2a2a35;border-radius:16px;padding:40px;width:100%;max-width:380px;text-align:center}
+h1{color:#fff;font-size:22px;margin-bottom:6px}
+p{color:#888;font-size:13px;margin-bottom:24px}
+input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid #2a2a35;background:#0f0f13;color:#fff;font-size:14px;outline:none;margin-bottom:12px}
+input:focus{border-color:#6366f1}
+button{width:100%;padding:12px;border-radius:10px;border:none;background:#6366f1;color:#fff;font-size:14px;font-weight:600;cursor:pointer}
+button:hover{background:#4f46e5}
+.error{color:#ef4444;font-size:12px;margin-top:8px}
+</style></head><body>
+<div class="card">
+<h1>Study Planner</h1>
+<p>Enter password to continue</p>
+<form method="post" action="/api/auth/login" id="loginForm">
+<input type="password" name="password" placeholder="Password" required autofocus>
+<button type="submit">Continue</button>
+</form>
+<div class="error" id="error"></div>
+</div>
+<script>document.getElementById('loginForm').onsubmit=async(e)=>{
+e.preventDefault();const p=document.querySelector('input').value;const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:p})})
+if(r.ok){window.location.href=new URLSearchParams(location.search).get('redirect')||'/'}
+else{document.getElementById('error').textContent='Wrong password'}}</script>
+</body></html>'''
+    return html
+
+@app.route("/api/auth/check")
+def api_auth_check():
+    return jsonify({"authed": session.get('authed', False)})
+
+@app.route("/api/auth/login", methods=["POST"])
+def api_auth_login():
+    data = request.json or request.form
+    p = data.get("password", "")
+    if p == APP_PASSWORD:
+        session['authed'] = True
+        session.permanent = True
+        return jsonify({"ok": True})
+    return jsonify({"error": "wrong password"}), 401
+
+@app.route("/api/auth/logout", methods=["POST"])
+def api_auth_logout():
+    session.pop('authed', None)
+    return jsonify({"ok": True})
 
 @app.route("/healthz")
 def healthz():

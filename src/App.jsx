@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
 import { LevelProvider } from './context/LevelContext'
 import VideoIntro from './components/VideoIntro'
@@ -11,6 +11,44 @@ function AppContent() {
   const [drawerOpen, setDrawerOpen] = useState(true)
   const [activeSection, setActiveSection] = useState('dashboard')
   const [themeOpen, setThemeOpen] = useState(false)
+  const [authed, setAuthed] = useState(null)
+  const [loginPass, setLoginPass] = useState('')
+  const [loginErr, setLoginErr] = useState('')
+
+  useEffect(() => {
+    fetch('/api/auth/check').then(r => r.json()).then(d => setAuthed(d.authed)).catch(() => setAuthed(true))
+  }, [])
+
+  const handleLogin = async () => {
+    setLoginErr('')
+    const r = await fetch('/api/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: loginPass })
+    })
+    if (r.ok) { setAuthed(true) } else { setLoginErr('Wrong password') }
+  }
+
+  if (authed === null) return null
+
+  if (authed === false) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'var(--bg)' }}>
+        <div className="w-full max-w-sm p-8 rounded-2xl text-center" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
+          <h1 className="text-xl font-bold mb-1" style={{ color: 'var(--fg)' }}>Study Planner</h1>
+          <p className="text-xs mb-6" style={{ color: 'var(--muted)' }}>Enter password to continue</p>
+          <input type="password" value={loginPass} onChange={e => setLoginPass(e.target.value)}
+            placeholder="Password"
+            className="w-full px-4 py-3 rounded-xl text-sm outline-none mb-3"
+            style={{ background: 'var(--input-bg)', color: 'var(--fg)', border: '1px solid var(--border)' }}
+            onKeyDown={e => e.key === 'Enter' && handleLogin()} />
+          <button onClick={handleLogin}
+            className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-105"
+            style={{ background: 'var(--accent)' }}>Continue</button>
+          {loginErr && <p className="text-xs mt-3" style={{ color: '#ef4444' }}>{loginErr}</p>}
+        </div>
+      </div>
+    )
+  }
 
   if (showIntro) {
     return <VideoIntro onDone={skipIntro} />
@@ -18,7 +56,6 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex" style={{ background: 'var(--bg)' }}>
-      {/* Drawer */}
       <div className={`fixed lg:relative z-50 h-screen transition-all duration-300 ${drawerOpen ? 'w-56' : 'w-0 lg:w-16'} overflow-hidden`}
         style={{ background: 'var(--sidebar)', borderRight: '1px solid var(--border)' }}>
         <div className={`${drawerOpen ? 'opacity-100' : 'lg:opacity-0'} transition-opacity min-w-56 h-full`}>
@@ -26,14 +63,11 @@ function AppContent() {
         </div>
       </div>
 
-      {/* Overlay for mobile drawer */}
       {drawerOpen && (
         <div className="fixed inset-0 z-40 bg-black/30 lg:hidden" onClick={() => setDrawerOpen(false)} />
       )}
 
-      {/* Main */}
       <div className="flex-1 flex flex-col min-h-screen">
-        {/* Header */}
         <header className="sticky top-0 z-30 backdrop-blur-xl border-b" style={{ background: 'var(--header)', borderColor: 'var(--border)' }}>
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
@@ -53,14 +87,13 @@ function AppContent() {
                 className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:scale-105"
                 style={{ background: 'var(--input-bg)' }}>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="var(--fg)" strokeWidth="1.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M17 7h.01" />
                 </svg>
               </button>
             </div>
           </div>
         </header>
 
-        {/* Content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           <div className="max-w-5xl mx-auto">
             <Dashboard activeSection={activeSection} onNavigate={setActiveSection} />

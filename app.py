@@ -33,6 +33,10 @@ llama = LlamaEngine()
 vmem = VectorMemory()
 reporter = ReportGenerator(db, reality, backlog, graph, scheduler, llama)
 
+@app.route("/healthz")
+def healthz():
+    return "ok", 200
+
 @app.route("/clear-sw")
 def clear_service_worker():
     html = '''<!DOCTYPE html><html><body>

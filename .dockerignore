@@ -1,0 +1,12 @@
+node_modules/
+.git/
+__pycache__/
+*.pyc
+.venv
+venv/
+data/
+backups/
+android/
+.env
+.gitignore
+*.md

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { parseAndExecuteActions, stripActions, AI_SYSTEM_PROMPT } from '../utils/actionParser'
+import { parseAndExecuteActions, stripActions, AI_SYSTEM_PROMPT, buildAppContext } from '../utils/actionParser'
 
 const API = '/api'
 const STORAGE_KEY = 'ls_messages'
@@ -45,7 +45,18 @@ export default function AiAgent() {
     } catch { return null }
   }, [])
 
-  useEffect(() => { loadStatus(); loadTasks(); loadGraph(); loadCloudHistory() }, [])
+  useEffect(() => { loadStatus(); loadTasks(); loadGraph(); loadCloudHistory(); autoAnalyze() }, [])
+
+  const autoAnalyze = async () => {
+    const gc = await api('/code/graph-context')
+    if (!gc) return
+    const appData = buildAppContext()
+    const hasTodos = appData.includes('Active Todos')
+    if (hasTodos) {
+      const analysis = `📊 **Auto-Analysis**\n\`\`\`\n${appData}\n\`\`\`\nSab kuch load hai. Kuch bhi bolo — todo add karna, exam add karna, analysis chahiye — main kar dunga! 👋`
+      setAiResponse(analysis)
+    }
+  }
 
   useEffect(() => {
     if (showHistory && historyEndRef.current) {
@@ -134,7 +145,7 @@ export default function AiAgent() {
   }
 
   const handleAsk = async () => {
-    if (!prompt.trim()) return
+    if (!prompt.trim() && !aiResponse) return
     setAskError('')
     setAiResponse('')
     setLoading(p => ({ ...p, ask: true }))
@@ -144,10 +155,13 @@ export default function AiAgent() {
     abortRef.current = new AbortController()
     try {
       const gc = await api('/code/graph-context')
-      const memoryCtx = gc ? 'My Memory about user:\n' + Object.entries(gc).filter(([k]) => !['total_nodes', 'total_edges', 'vector_memories'].includes(k)).map(([type, items]) => `- ${type}: ${items.join(', ')}`).join('\n') : ''
-      const vc = await api(`/memory/context?q=${encodeURIComponent(prompt)}`)
-      const fullMemCtx = [memoryCtx, vc?.context].filter(Boolean).join('\n\n')
-      const fullPrompt = `${fullMemCtx}\n\nUser: ${prompt}`
+      const memoryCtx = gc ? '🧠 My Memory about user:\n' + Object.entries(gc).filter(([k]) => !['total_nodes', 'total_edges', 'vector_memories'].includes(k)).map(([type, items]) => `- ${type}: ${items.join(', ')}`).join('\n') : ''
+      const vc = await api(`/memory/context?q=${encodeURIComponent(prompt || 'analyze everything')}`)
+      const appData = buildAppContext()
+      const vmemCtx = vc?.context ? `🧩 Related memories:\n${vc.context}` : ''
+      const fullAppState = `📊 APP STATE:\n${appData}\n\n${memoryCtx}\n\n${vmemCtx}`
+      const userMsg = prompt || 'Analyze my entire study status and suggest improvements'
+      const fullPrompt = `${fullAppState}\n\nUser: ${userMsg}`
       const res = await fetch(`${API}/llama/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -400,6 +414,11 @@ export default function AiAgent() {
                 Clear
               </button>
             )}
+            <button onClick={() => { setPrompt(''); handleAsk() }}
+              className="px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+              style={{ background: '#22c55e20', color: '#22c55e' }}>
+              🔄 Analyze
+            </button>
           </div>
         </div>
 
@@ -427,7 +446,7 @@ export default function AiAgent() {
             className="flex-1 px-4 py-2.5 rounded-xl text-xs outline-none"
             style={{ background: 'var(--input-bg)', color: 'var(--fg)', border: '1px solid var(--border)' }}
             onKeyDown={e => e.key === 'Enter' && handleAsk()} />
-          <button onClick={handleAsk} disabled={loading.ask || !prompt.trim()}
+          <button onClick={handleAsk} disabled={loading.ask}
             className="px-4 py-2.5 rounded-xl text-xs font-bold text-white transition-all hover:scale-105 flex items-center gap-2"
             style={{ background: loading.ask ? 'var(--input-bg)' : 'var(--accent)' }}>
             {loading.ask ? (

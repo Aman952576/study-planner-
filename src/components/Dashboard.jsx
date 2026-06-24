@@ -21,6 +21,7 @@ import Resources from './Resources'
 import AiAgent from './AiAgent'
 import CodeAgent from './CodeAgent'
 import Mnc from './MNC'
+import Users from './Users'
 
 const QUOTES = [
   'Success is the sum of small efforts repeated day in and day out.',
@@ -79,6 +80,7 @@ const sections = {
   aiagent: { component: AiAgent, label: 'AI Agent' },
   codeagent: { component: CodeAgent, label: 'Code Agent' },
   mnc: { component: Mnc, label: 'MNC Dashboard' },
+  users: { component: Users, label: 'Users' },
 }
 
 function getItem(key) {

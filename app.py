@@ -83,7 +83,8 @@ def api_status():
         "actual_mode": getattr(llama, '_actual_mode', llama.mode),
         "forced_mode": getattr(llama, 'forced_mode', None),
         "groq_available": llama.groq_available(),
-        "cloud_memory": hasattr(vmem, '_supa') and vmem._supa is not None
+        "cloud_memory": hasattr(vmem, '_supa') and vmem._supa is not None,
+        "groq_usage": llama.groq_usage() if hasattr(llama, 'groq_usage') else {}
     })
 
 @app.route("/api/tasks", methods=["GET"])
@@ -290,6 +291,13 @@ def api_llama_chat():
     llama.max_tokens = 256
     resp = llama.ask(full_prompt, system)
     llama.max_tokens = old_max
+
+    if resp == "[RATE_LIMIT]":
+        gr = llama.groq_remaining
+        msg = "⚠️ Groq 70B rate limit reached. "
+        msg += f"Resets in {gr.get('reset_requests', 'a few minutes')}. "
+        msg += "Using local Ollama instead or try again later."
+        return jsonify({"response": msg, "rate_limited": True, "groq_remaining": gr})
 
     memories = []
     if resp:

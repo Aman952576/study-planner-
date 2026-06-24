@@ -21,9 +21,9 @@ class LlamaEngine:
         self.n_gpu_layers = llm.get("n_gpu_layers", 0)
         self.max_retries = llm["max_retries"]
         self._model = None
-        self._groq_client = None
         self._actual_mode = self.mode
         self.forced_mode = None
+        self.groq_remaining = {"requests": 30, "tokens": 7000, "reset_requests": "", "reset_tokens": ""}
 
     def _get_groq_client(self):
         if self._groq_client is None and GROQ_API_KEY:
@@ -63,9 +63,15 @@ class LlamaEngine:
         if fm in ("ollama", "groq"):
             if fm == "groq":
                 resp = self._ask_groq(prompt, system)
-                if resp:
+                if resp and resp != "[RATE_LIMIT]":
                     self._actual_mode = "groq"
                     return resp
+                if resp == "[RATE_LIMIT]":
+                    resp2 = self._ask_ollama(prompt, system)
+                    if resp2:
+                        self._actual_mode = "ollama"
+                        return resp2
+                    return "[RATE_LIMIT]"
                 resp = self._ask_ollama(prompt, system)
                 if resp:
                     self._actual_mode = "ollama"
@@ -76,7 +82,7 @@ class LlamaEngine:
                     self._actual_mode = "ollama"
                     return resp
                 resp = self._ask_groq(prompt, system)
-                if resp:
+                if resp and resp != "[RATE_LIMIT]":
                     self._actual_mode = "groq"
                     return resp
 
@@ -119,23 +125,45 @@ class LlamaEngine:
         return None
 
     def _ask_groq(self, prompt, system=""):
-        client = self._get_groq_client()
-        if not client:
+        if not GROQ_API_KEY:
             return None
         try:
+            headers = {
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json"
+            }
             messages = []
             if system:
                 messages.append({"role": "system", "content": system})
             messages.append({"role": "user", "content": prompt})
-            resp = client.chat.completions.create(
-                model=GROQ_MODEL,
-                messages=messages,
-                temperature=self.temperature,
-                max_tokens=self.max_tokens
+            payload = {
+                "model": GROQ_MODEL,
+                "messages": messages,
+                "temperature": self.temperature,
+                "max_tokens": self.max_tokens
+            }
+            resp = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                json=payload, headers=headers, timeout=30
             )
-            return resp.choices[0].message.content.strip()
+            if resp.status_code == 200:
+                rl = resp.headers.get("x-ratelimit-remaining-requests", "30")
+                rt = resp.headers.get("x-ratelimit-remaining-tokens", "7000")
+                try: self.groq_remaining["requests"] = int(rl)
+                except: self.groq_remaining["requests"] = 0
+                try: self.groq_remaining["tokens"] = int(rt)
+                except: self.groq_remaining["tokens"] = 0
+                self.groq_remaining["reset_requests"] = resp.headers.get("x-ratelimit-reset-requests", "")
+                return resp.json()["choices"][0]["message"]["content"].strip()
+            if resp.status_code == 429:
+                self.groq_remaining["requests"] = 0
+                return "[RATE_LIMIT]"
+            return None
         except Exception:
             return None
+
+    def groq_usage(self):
+        return dict(self.groq_remaining)
 
     def prioritize(self, tasks):
         if not self.enabled or not tasks:

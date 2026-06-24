@@ -11,7 +11,7 @@ function getSessionId() {
 }
 
 export default function AiAgent() {
-  const [status, setStatus] = useState({ llama_enabled: false, llama_connected: false, groq_available: false, actual_mode: 'ollama', cloud_memory: false })
+  const [status, setStatus] = useState({ llama_enabled: false, llama_connected: false, groq_available: false, actual_mode: 'ollama', cloud_memory: false, groq_usage: {} })
   const [tasks, setTasks] = useState([])
   const [prioritized, setPrioritized] = useState([])
   const [loading, setLoading] = useState({})
@@ -237,21 +237,34 @@ export default function AiAgent() {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px]" style={{ color: 'var(--muted)' }}>
           <span>AI: <strong style={{ color: 'var(--fg)' }}>{activeMode === 'groq' ? 'Groq 70B' : 'Ollama'}</strong></span>
           <span>Memory: <strong style={{ color: 'var(--fg)' }}>{status.cloud_memory ? 'Supabase ☁️' : 'Local'}</strong></span>
-          <span>Fallback: <strong style={{ color: status.groq_available ? '#22c55e' : 'var(--muted)' }}>{status.groq_available ? 'Groq ready' : 'none'}</strong></span>
+          {status.groq_usage?.requests !== undefined && status.groq_available && (
+            <span>Groq limit: <strong style={{ color: status.groq_usage.requests < 5 ? '#ef4444' : status.groq_usage.requests < 15 ? '#f59e0b' : '#22c55e' }}>{status.groq_usage.requests} left</strong></span>
+          )}
         </div>
         {status.groq_available && (
           <div className="flex gap-2 mt-3">
-            {['auto', 'ollama', 'groq'].map(m => (
-              <button key={m} onClick={() => handleModeSwitch(m)}
-                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all ${aiMode === m ? 'ring-2' : ''}`}
+            {[
+              { id: 'auto', label: 'Auto 🔄', disabled: false },
+              { id: 'ollama', label: 'Ollama ⚡', disabled: status.cloud_memory && !status.llama_connected },
+              { id: 'groq', label: 'Groq 70B 🔥', disabled: status.groq_usage?.requests <= 0 }
+            ].map(m => (
+              <button key={m.id} onClick={() => !m.disabled && handleModeSwitch(m.id)}
+                disabled={m.disabled}
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all ${aiMode === m.id ? 'ring-2' : ''} ${m.disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
                 style={{
-                  background: aiMode === m ? 'var(--accent)' : 'var(--input-bg)',
-                  color: aiMode === m ? '#fff' : 'var(--muted)',
+                  background: aiMode === m.id ? 'var(--accent)' : 'var(--input-bg)',
+                  color: aiMode === m.id ? '#fff' : 'var(--muted)',
                   border: '1px solid var(--border)'
-                }}>
-                {m === 'auto' ? 'Auto 🔄' : m === 'ollama' ? 'Ollama ⚡' : 'Groq 70B 🔥'}
+                }}
+                title={m.disabled ? (m.id === 'ollama' ? 'Ollama not available on cloud' : 'Groq rate limit reached') : ''}>
+                {m.label}
               </button>
             ))}
+            {status.groq_usage?.requests <= 0 && status.groq_available && (
+              <span className="px-2 py-1 rounded-lg text-[9px]" style={{ background: '#ef444420', color: '#ef4444' }}>
+                Resets in {status.groq_usage.reset_requests || '2m'}
+              </span>
+            )}
           </div>
         )}
         {!llamaEnabled && (

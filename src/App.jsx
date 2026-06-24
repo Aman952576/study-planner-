@@ -29,6 +29,7 @@ function AppContent() {
       const d = await r.json()
       setAuthed(true)
       localStorage.setItem('st_user', d?.user || '')
+      if (d?.user === 'admin') localStorage.setItem('st_adm', 'yes')
     } else {
       setLoginErr('Wrong password')
     }

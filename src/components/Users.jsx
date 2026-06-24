@@ -1,11 +1,58 @@
 import { useState, useEffect } from 'react'
 
+function AdminLogin({ onSuccess }) {
+  const [p, setP] = useState('')
+  const [err, setErr] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async () => {
+    setErr('')
+    setLoading(true)
+    try {
+      const r = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: p })
+      })
+      if (r.ok) {
+        const d = await r.json()
+        localStorage.setItem('st_user', d?.user || '')
+        if (d?.user === 'admin') localStorage.setItem('st_adm', 'yes')
+        onSuccess()
+      } else {
+        setErr('Wrong password')
+      }
+    } catch { setErr('Error') }
+    setLoading(false)
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
+      <p className="text-[10px] font-bold" style={{ color: 'var(--fg)' }}>Admin Login</p>
+      <div className="flex gap-2">
+        <input type="password" value={p} onChange={e => setP(e.target.value)} placeholder="Admin password"
+          className="px-3 py-2 rounded-lg text-xs outline-none"
+          style={{ background: 'var(--input-bg)', color: 'var(--fg)', border: '1px solid var(--border)' }}
+          onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
+        <button onClick={handleSubmit} disabled={loading || !p.trim()}
+          className="px-4 py-2 rounded-lg text-[10px] font-bold text-white"
+          style={{ background: loading ? 'var(--input-bg)' : 'var(--accent)' }}>
+          {loading ? '...' : 'Verify'}
+        </button>
+      </div>
+      {err && <p className="text-[10px]" style={{ color: '#ef4444' }}>{err}</p>}
+    </div>
+  )
+}
+
 export default function Users() {
   const [users, setUsers] = useState([])
   const [newName, setNewName] = useState('')
   const [newPass, setNewPass] = useState('')
   const [msg, setMsg] = useState('')
-  const isAdmin = localStorage.getItem('st_user') === 'admin'
+  const [isAdmin, setIsAdmin] = useState(() => {
+    return localStorage.getItem('st_user') === 'admin' || localStorage.getItem('st_adm') === 'yes'
+  })
 
   const api = async (url, opts = {}) => {
     try {
@@ -18,7 +65,6 @@ export default function Users() {
   }
 
   const load = async () => {
-    if (!isAdmin) return
     const d = await api('/api/auth/users')
     if (d && Array.isArray(d)) setUsers(d)
   }
@@ -43,9 +89,14 @@ export default function Users() {
 
   if (!isAdmin) {
     return (
-      <div className="rounded-xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
+      <div className="rounded-xl p-8 text-center space-y-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
         <p className="text-sm" style={{ color: 'var(--muted)' }}>Only admin can manage users.</p>
-        <p className="text-xs mt-2" style={{ color: 'var(--muted)' }}>Login with admin password to add/manage users.</p>
+        <p className="text-xs" style={{ color: 'var(--muted)' }}>Login with admin password to add/manage users.</p>
+        <AdminLogin onSuccess={() => {
+          localStorage.setItem('st_adm', 'yes')
+          setIsAdmin(true)
+          load()
+        }} />
       </div>
     )
   }

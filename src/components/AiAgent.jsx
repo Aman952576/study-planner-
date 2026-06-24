@@ -32,6 +32,7 @@ export default function AiAgent() {
   const [showHistory, setShowHistory] = useState(false)
   const historyEndRef = useRef(null)
   const [chatLoaded, setChatLoaded] = useState(false)
+  const [aiMode, setAiMode] = useState(() => localStorage.getItem('ai_mode') || 'auto')
 
   const api = useCallback(async (url, opts = {}) => {
     try {
@@ -122,6 +123,13 @@ export default function AiAgent() {
     const r = await api('/scan')
     if (r) setScanData(r)
     setLoading(p => ({ ...p, scan: false }))
+  }
+
+  const handleModeSwitch = async (mode) => {
+    setAiMode(mode)
+    localStorage.setItem('ai_mode', mode)
+    await api('/llama/mode', { method: 'POST', body: JSON.stringify({ mode }) })
+    loadStatus()
   }
 
   const handleAsk = async () => {
@@ -227,10 +235,25 @@ export default function AiAgent() {
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px]" style={{ color: 'var(--muted)' }}>
-          <span>AI mode: <strong style={{ color: 'var(--fg)' }}>{activeMode === 'groq' ? 'Groq 70B' : 'Ollama'}</strong></span>
+          <span>AI: <strong style={{ color: 'var(--fg)' }}>{activeMode === 'groq' ? 'Groq 70B' : 'Ollama'}</strong></span>
           <span>Memory: <strong style={{ color: 'var(--fg)' }}>{status.cloud_memory ? 'Supabase ☁️' : 'Local'}</strong></span>
           <span>Fallback: <strong style={{ color: status.groq_available ? '#22c55e' : 'var(--muted)' }}>{status.groq_available ? 'Groq ready' : 'none'}</strong></span>
         </div>
+        {status.groq_available && (
+          <div className="flex gap-2 mt-3">
+            {['auto', 'ollama', 'groq'].map(m => (
+              <button key={m} onClick={() => handleModeSwitch(m)}
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all ${aiMode === m ? 'ring-2' : ''}`}
+                style={{
+                  background: aiMode === m ? 'var(--accent)' : 'var(--input-bg)',
+                  color: aiMode === m ? '#fff' : 'var(--muted)',
+                  border: '1px solid var(--border)'
+                }}>
+                {m === 'auto' ? 'Auto 🔄' : m === 'ollama' ? 'Ollama ⚡' : 'Groq 70B 🔥'}
+              </button>
+            ))}
+          </div>
+        )}
         {!llamaEnabled && (
           <button onClick={handleEnable} disabled={loading.enable}
             className="mt-3 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:scale-105"

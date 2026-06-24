@@ -81,6 +81,7 @@ def api_status():
         "llama_model": llama.model,
         "mode": llama.mode,
         "actual_mode": getattr(llama, '_actual_mode', llama.mode),
+        "forced_mode": getattr(llama, 'forced_mode', None),
         "groq_available": llama.groq_available(),
         "cloud_memory": hasattr(vmem, '_supa') and vmem._supa is not None
     })
@@ -241,6 +242,18 @@ def api_llama_disable():
     save_config(cfg)
     llama = LlamaEngine()
     return jsonify({"ok": True})
+
+@app.route("/api/llama/mode", methods=["POST"])
+def api_llama_set_mode():
+    data = request.json
+    mode = data.get("mode", "auto")
+    if mode == "auto":
+        llama.forced_mode = None
+    elif mode in ("ollama", "groq"):
+        llama.forced_mode = mode
+    else:
+        return jsonify({"error": "invalid mode"}), 400
+    return jsonify({"ok": True, "mode": mode, "actual_mode": getattr(llama, '_actual_mode', llama.mode)})
 
 @app.route("/api/llama/prioritize", methods=["POST"])
 def api_llama_prioritize():

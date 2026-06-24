@@ -9,3 +9,13 @@ venv/
 .env
 *.gguf
 *.bin
+android/.gradle/
+android/build/
+android/capacitor-cordova-android-plugins/
+android/app/build/
+android/app/src/main/assets/public/
+templates/
+*.jar
+*.png
+*.ico
+build/

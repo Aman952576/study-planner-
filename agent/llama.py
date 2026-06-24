@@ -23,6 +23,7 @@ class LlamaEngine:
         self._model = None
         self._groq_client = None
         self._actual_mode = self.mode
+        self.forced_mode = None
 
     def _get_groq_client(self):
         if self._groq_client is None and GROQ_API_KEY:
@@ -51,22 +52,33 @@ class LlamaEngine:
         if not self.enabled:
             return None
 
-        if self.mode == "direct":
+        fm = self.forced_mode or self.mode
+
+        if fm == "direct":
             resp = self._ask_direct(prompt, system)
             if resp:
                 self._actual_mode = "direct"
                 return resp
 
-        if self.mode == "groq" or self.mode == "ollama":
-            resp = self._ask_ollama(prompt, system)
-            if resp:
-                self._actual_mode = "ollama"
-                return resp
-
-        resp = self._ask_groq(prompt, system)
-        if resp:
-            self._actual_mode = "groq"
-            return resp
+        if fm in ("ollama", "groq"):
+            if fm == "groq":
+                resp = self._ask_groq(prompt, system)
+                if resp:
+                    self._actual_mode = "groq"
+                    return resp
+                resp = self._ask_ollama(prompt, system)
+                if resp:
+                    self._actual_mode = "ollama"
+                    return resp
+            else:
+                resp = self._ask_ollama(prompt, system)
+                if resp:
+                    self._actual_mode = "ollama"
+                    return resp
+                resp = self._ask_groq(prompt, system)
+                if resp:
+                    self._actual_mode = "groq"
+                    return resp
 
         self._actual_mode = self.mode
         return None

@@ -35,6 +35,16 @@ llama = LlamaEngine()
 vmem = VectorMemory()
 reporter = ReportGenerator(db, reality, backlog, graph, scheduler, llama)
 
+# Auto-enable AI with groq mode if groq key is present and ollama not available
+GROQ_KEY = os.environ.get("GROQ_API_KEY", "")
+if GROQ_KEY and not llama.check():
+    cfg = load_config()
+    cfg["llama"]["enabled"] = True
+    cfg["llama"]["mode"] = "groq"
+    save_config(cfg)
+    llama = LlamaEngine()
+    llama.forced_mode = "groq"
+
 # ─── Simple password protection ───────────────────────────
 if APP_PASSWORD:
     @app.before_request
@@ -342,7 +352,11 @@ def api_llama_enable():
     cfg["llama"]["mode"] = "ollama"
     save_config(cfg)
     llama = LlamaEngine()
-    return jsonify({"ok": True, "connected": llama.check()})
+    connected = llama.check()
+    if not connected and os.environ.get("GROQ_API_KEY", ""):
+        llama.forced_mode = "groq"
+        connected = True
+    return jsonify({"ok": True, "connected": connected})
 
 @app.route("/api/llama/disable", methods=["POST"])
 def api_llama_disable():

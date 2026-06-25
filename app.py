@@ -420,11 +420,12 @@ def api_llama_chat():
     llama.max_tokens = old_max
 
     if resp is None:
-        return jsonify({"response": f"⚠️ AI not responding. Mode: {llama.forced_mode or llama.mode}, Groq key: {'set' if GROQ_KEY else 'missing'}, Ollama: {'checking...' if llama.check() else 'not available'}"})
+        return jsonify({"response": f"⚠️ AI not responding. Mode: {llama.forced_mode or llama.mode}, Groq key: {'set' if GROQ_KEY else 'missing'}"})
+    if resp == "[RATE_LIMIT]":
         gr = llama.groq_remaining
         msg = "⚠️ Groq 70B rate limit reached. "
         msg += f"Resets in {gr.get('reset_requests', 'a few minutes')}. "
-        msg += "Using local Ollama instead or try again later."
+        msg += "Try again later."
         return jsonify({"response": msg, "rate_limited": True, "groq_remaining": gr})
 
     memories = []

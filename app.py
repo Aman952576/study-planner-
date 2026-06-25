@@ -413,10 +413,14 @@ def api_llama_chat():
     full_prompt = f"{context}\n\nUser: {prompt}" if context else prompt
     old_max = llama.max_tokens
     llama.max_tokens = min(data.get("max_tokens", 512), 1024)
-    resp = llama.ask(full_prompt, system)
+    try:
+        resp = llama.ask(full_prompt, system)
+    except Exception as e:
+        return jsonify({"response": f"⚠️ AI error: {str(e)}. Groq mode: {llama.forced_mode or llama.mode}, API key: {'set' if GROQ_KEY else 'missing'}"})
     llama.max_tokens = old_max
 
-    if resp == "[RATE_LIMIT]":
+    if resp is None:
+        return jsonify({"response": f"⚠️ AI not responding. Mode: {llama.forced_mode or llama.mode}, Groq key: {'set' if GROQ_KEY else 'missing'}, Ollama: {'checking...' if llama.check() else 'not available'}"})
         gr = llama.groq_remaining
         msg = "⚠️ Groq 70B rate limit reached. "
         msg += f"Resets in {gr.get('reset_requests', 'a few minutes')}. "
@@ -652,6 +656,8 @@ def open_browser():
 def main():
     port = int(os.environ.get("PORT", 5555))
     host = os.environ.get("HOST", "127.0.0.1")
+    print(f"  GROQ_KEY set: {bool(GROQ_KEY)}")
+    print(f"  AI auto-enabled: {llama.enabled}, mode: {llama.mode}, forced: {llama.forced_mode}")
     threading.Thread(target=open_browser, daemon=True).run()
     print(f"  Aman's Study Agent UI: http://{host}:{port}")
     app.run(host=host, port=port, debug=False, use_reloader=False)
